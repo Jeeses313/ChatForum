@@ -1,5 +1,5 @@
 # ChatForum (Full Stack -harjoitustyö)  
-Ractilla ja GraphQl:llä tehty chattifoorumi. 
+Reactilla ja GraphQl:llä tehty chattifoorumi. 
   
-* [Työaikakirjanpito]()  
-* [Käyttöohje]()
+* [Työaikakirjanpito](https://github.com/Jeeses313/ChatForum/blob/master/dokumentaatio/tyoaikakirjanpito.md)  
+* [Käyttöohje](https://github.com/Jeeses313/ChatForum/blob/master/dokumentaatio/kayttoohje.md)
