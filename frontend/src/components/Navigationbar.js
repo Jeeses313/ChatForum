@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navbar, Nav, Button } from 'react-bootstrap'
 import { Link, useHistory } from 'react-router-dom'
+import Notification from './Notification'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser } from '../reducers/userReducer'
 import { setToken } from '../reducers/tokenReducer'
@@ -34,7 +35,7 @@ const Navigationbar = () => {
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-            <br />
+            <Notification></Notification>
         </>
     )
 }
