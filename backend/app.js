@@ -1,6 +1,8 @@
 const express = require('express')
 const { MONGODB_URI } = require('./utils/config')
 const app = express()
+const cors = require('cors')
+app.use(cors())
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
