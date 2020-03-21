@@ -39,7 +39,7 @@ const LoginForm = () => {
     }
 
     return (
-        <>
+        <div className='container'>
             <h2>Login</h2>
             <Notification></Notification>
             <Form onSubmit={submit}>
@@ -49,7 +49,7 @@ const LoginForm = () => {
                 <Form.Control type="password" id='password' value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
                 <Button id='submit' type="submit">login</Button> or <Link to='/signin'>signin</Link>
             </Form>
-        </>
+        </div>
     )
 }
 

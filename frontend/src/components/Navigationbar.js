@@ -27,7 +27,7 @@ const Navigationbar = () => {
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="#" as="span">
-                            <Button variant="outline-info" onClick={() => { }}>nothing</Button>
+                            <Button variant="outline-info" onClick={() => {history.push('/chats')}}>Chats</Button>
                         </Nav.Link>
                         <Nav.Link href="#" as="span">
                             <div><Link to='/'>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>

@@ -20,6 +20,8 @@ const typeDefs = gql`
     type Chat {
         title: String!
         comments: [Comment!]!
+        latestComment: Comment
+        date: Date!
         id: ID!
     }
 
@@ -28,6 +30,11 @@ const typeDefs = gql`
         date: Date!
         content: String!
         id: ID!
+    }
+
+    type CommentSub {
+        comment: Comment!
+        chatTitle: String!
     }
   
     type Token {
@@ -60,11 +67,12 @@ const typeDefs = gql`
     }  
 
     type Subscription {
-        commentAdded: Comment!
+        commentAdded: CommentSub!
+        chatAdded: Chat!
     }
 `
 
-    
+
 
 
 
@@ -95,6 +103,13 @@ const resolvers = {
             }
             return await Chat.find({}).populate({
                 path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            }).populate({
+                path: 'latestComment',
                 model: 'Comment',
                 populate: {
                     path: 'user',
@@ -154,8 +169,11 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError("Not authenticated")
             }
-            const chat = new Chat({ title: args.chatTitle, comments: [] })
-            return chat.save().catch(error => {
+            const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date })
+            return chat.save().then(async res => {
+                pubsub.publish('CHAT_ADDED', { chatAdded: res })
+                return res
+            }).catch(error => {
                 throw new UserInputError('Title must be at least 3 characters long and unique')
             })
         },
@@ -169,21 +187,24 @@ const resolvers = {
             }
             const comment = new Comment({ user: currentUser, content: args.content, date: new Date })
             return comment.save().then(async res => {
-                await Chat.findOneAndUpdate({ title: chat.title }, { comments: chat.comments.concat(res._id) })
-                pubsub.publish('COMMENT_ADDED', { commentAdded: res })
+                await Chat.findOneAndUpdate({ title: chat.title }, { comments: chat.comments.concat(res._id), latestComment: res })
+                pubsub.publish('COMMENT_ADDED', { commentAdded: { comment: res, chatTitle: args.chatTitle } })
                 return res
             }).catch(error => {
                 throw new UserInputError('Content of comment must be at least 1 characters long')
             })
         }
     },
-    
+
     Subscription: {
         commentAdded: {
             subscribe: () => pubsub.asyncIterator(['COMMENT_ADDED'])
+        },
+        chatAdded: {
+            subscribe: () => pubsub.asyncIterator(['CHAT_ADDED'])
         }
     }
-    
+
 }
 
 

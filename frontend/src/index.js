@@ -5,7 +5,7 @@ import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from '@a
 import { setContext } from 'apollo-link-context'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/link-ws'
-import { BrowserRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './store'
 import { setUser } from './reducers/userReducer'
@@ -33,16 +33,13 @@ const defaultOptions = {
 const httpLink = new HttpLink({ uri: 'http://localhost:3001/graphql' })
 
 const wsLink = new WebSocketLink({
-    uri: `ws://localhost:3001/graphql`,
+    uri: 'ws://localhost:3001/graphql',
     options: { reconnect: true }
 })
 const splitLink = split(({ query }) => {
     const definition = getMainDefinition(query)
     return (definition.kind === 'OperationDefinition' && definition.operation === 'subscription')
-},
-    wsLink,
-    authLink.concat(httpLink)
-)
+}, wsLink, authLink.concat(httpLink))
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
@@ -56,7 +53,6 @@ const client = new ApolloClient({
 const loggedToken = localStorage.getItem('user-token')
 const loggedUser = localStorage.getItem('logged-user')
 if (loggedToken) {
-    console.log(`${loggedToken} 2`)
     store.dispatch(setToken(loggedToken))
 }
 if (loggedUser) {

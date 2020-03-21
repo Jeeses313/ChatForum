@@ -12,7 +12,15 @@ const schema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Comment'
         }
-    ]
+    ],
+    date: {
+        type: Date,
+        required: true
+    },
+    latestComment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }
 })
 
 schema.set('toJSON', {
