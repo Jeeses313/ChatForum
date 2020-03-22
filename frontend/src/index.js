@@ -33,7 +33,7 @@ const defaultOptions = {
 const httpLink = new HttpLink({ uri: '/graphql' })
 
 const wsLink = new WebSocketLink({
-    uri: `ws://${window.location.host}/graphql`,
+    uri: `wss://${window.location.host}/graphql`,
     options: { reconnect: true }
 })
 const splitLink = split(({ query }) => {
