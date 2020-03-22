@@ -1,36 +1,17 @@
-const { PORT, NODE_ENV } = require('./utils/config')
+const { PORT } = require('./utils/config')
 const schema = require('./schema')
 const app = require('./app')
 const { ApolloServer } = require('apollo-server-express');
 const server = new ApolloServer(schema)
 server.applyMiddleware({ app })
 const http = require('http')
-const https = require('https')
-const configurations = {
-    production: { ssl: true, port: PORT, hostname: 'localhost' },
-    development: { ssl: false, port: PORT, hostname: 'localhost' }
-}
-const config = configurations[NODE_ENV]
-const fs = require('fs')
-let httpServer
-if (config.ssl) {
-    httpServer = https.createServer({
-        key: fs.readFileSync('./key.pem'),
-        cert: fs.readFileSync('./certificate.pem')
-    }, app)
-} else {
-    httpServer = http.createServer(app)
-}
-
+const httpServer = http.createServer(app);
+const { NODE_ENV } = require('./utils/config')
 server.installSubscriptionHandlers(httpServer);
-httpServer.listen(config.port, () => {
+httpServer.listen(PORT, () => {
     if (NODE_ENV === "development") {
-        console.log(`Playground ready at http://localhost:${config.port}${server.graphqlPath}`)
-        console.log(`Server ready at http://localhost:${config.port}`)
-        console.log(`Subscriptions ready at ws://localhost:${config.port}${server.subscriptionsPath}`)
-    } else {
-        console.log(`Server ready at https://localhost:${config.port}`)
-        console.log(`Subscriptions ready at wss://localhost:${config.port}${server.subscriptionsPath}`)
+        console.log(`Playground ready at http://localhost:${PORT}${server.graphqlPath}`)
     }
-
+    console.log(`Server ready at http://localhost:${PORT}`)
+    console.log(`Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`)
 })
