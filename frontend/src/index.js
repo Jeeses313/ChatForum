@@ -32,10 +32,18 @@ const defaultOptions = {
 
 const httpLink = new HttpLink({ uri: '/graphql' })
 
-const wsLink = new WebSocketLink({
-    uri: `wss://${window.location.host}/graphql`,
-    options: { reconnect: true }
-})
+let wsLink
+if (window.location.host.includes('localhost')) {
+    wsLink = new WebSocketLink({
+        uri: `ws://${window.location.host}/graphql`,
+        options: { reconnect: true }
+    })
+} else {
+    wsLink = new WebSocketLink({
+        uri: `wss://${window.location.host}/graphql`,
+        options: { reconnect: true }
+    })
+}
 const splitLink = split(({ query }) => {
     const definition = getMainDefinition(query)
     return (definition.kind === 'OperationDefinition' && definition.operation === 'subscription')
