@@ -7,7 +7,7 @@ server.applyMiddleware({ app })
 const http = require('http')
 const https = require('https')
 const configurations = {
-    production: { ssl: true, port: 443, hostname: 'localhost' },
+    production: { ssl: true, port: PORT, hostname: 'localhost' },
     development: { ssl: false, port: PORT, hostname: 'localhost' }
 }
 const config = configurations[NODE_ENV]
