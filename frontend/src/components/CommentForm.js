@@ -23,7 +23,7 @@ const CommentForm = ({ title }) => {
             <Form onSubmit={submit}>
                 <Row size='lg'>
                     <Col md='10'>
-                        <Form.Control as='textarea' rows='2' style={{ resize: 'none' }} id='content' value={content} name='content' onChange={({ target }) => setContent(target.value)} placeholder='New comment...' required block />
+                        <Form.Control as='textarea' rows='2' style={{ resize: 'none' }} id='content' value={content} name='content' onChange={({ target }) => setContent(target.value)} placeholder='New comment...' required block='true' />
                     </Col>
                     <Col md='2'>
                         <Button id='submit' type='submit' size='lg' block>Send</Button>

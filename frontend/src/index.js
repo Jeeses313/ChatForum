@@ -30,10 +30,10 @@ const defaultOptions = {
     }
 }
 
-const httpLink = new HttpLink({ uri: 'http://localhost:3001/graphql' })
+const httpLink = new HttpLink({ uri: '/graphql' })
 
 const wsLink = new WebSocketLink({
-    uri: 'ws://localhost:3001/graphql',
+    uri: `ws://${window.location.host}/graphql`,
     options: { reconnect: true }
 })
 const splitLink = split(({ query }) => {

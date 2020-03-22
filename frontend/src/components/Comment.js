@@ -19,9 +19,7 @@ const Comment = ({ comment }) => {
             <div>
                 {comment.user.username} {date}
             </div>
-            <textarea rows='2' readOnly style={contentBoxStyle} block>
-                {comment.content}
-            </textarea>
+            <textarea rows='2' value={comment.content} readOnly style={contentBoxStyle} block='true' />
         </div>
     )
 }

@@ -34,6 +34,7 @@ export const COMMENT_ADDED = gql`
                 }
                 date
                 content
+                id
             }
             chatTitle
         }
