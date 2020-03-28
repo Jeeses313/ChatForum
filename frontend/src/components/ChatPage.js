@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { useLazyQuery, useSubscription } from '@apollo/client'
-import { COMMENT_ADDED, COMMENTS } from '../queries/commentqueries'
+import { COMMENT_ADDED, COMMENTS, COMMENT_DELETED, COMMENT_EDITED } from '../queries/commentqueries'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 
 const ChatPage = () => {
     const [comments, setComments] = useState([])
+    const [commentsToShow, setCommentsToShow] = useState([])
+    const [filter, setFilter] = useState('')
     const [loadComments, commentsResult] = useLazyQuery(COMMENTS)
     const match = useRouteMatch('/chats/:title')
     const title = match ? match.params.title : null
@@ -40,6 +42,25 @@ const ChatPage = () => {
             }
         }
     })
+    useSubscription(COMMENT_DELETED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const deletedComment = subscriptionData.data.commentDeleted
+            setComments(comments.map(comment => comment.id === deletedComment.id ? { ...comment, content: deletedComment.content } : comment))
+        }
+    })
+    useSubscription(COMMENT_EDITED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const editedComment = subscriptionData.data.commentEdited
+            setComments(comments.map(comment => comment.id === editedComment.id ? { ...comment, content: editedComment.content } : comment))
+        }
+    })
+    useEffect(() => {
+        if (filter === '') {
+            setCommentsToShow(comments)
+        } else {
+            setCommentsToShow(comments.filter(comment => comment.content.toLowerCase().includes(filter.toLowerCase())))
+        }
+    }, [filter, comments])
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',
@@ -52,12 +73,13 @@ const ChatPage = () => {
 
     return (
         <>
-            <h2>{title}</h2>
+            <h2 style={{ display: 'inline-block' }}>{title}</h2>
+            <input style={{ float: 'right', bottom: '0%', width: '30%' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
             <div style={styleBox}>
                 {comments.length === 0 ?
                     <div>No comments yet</div>
                     :
-                    comments.map(comment =>
+                    commentsToShow.map(comment =>
                         <Comment key={comment.id} comment={comment}></Comment>
                     )
                 }

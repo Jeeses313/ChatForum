@@ -19,6 +19,7 @@ export const CHATS = gql`
                     username
                 }
             }
+            id
             date
         }
     }
@@ -36,6 +37,22 @@ export const CHAT_ADDED = gql`
                 }
             }
             date
+        }
+    }
+`
+
+export const PIN_CHAT = gql`
+    mutation pinChat($chatTitle: String!) {
+        pinChat(chatTitle: $chatTitle)  {
+            title
+        }
+    }
+`
+
+export const UNPIN_CHAT = gql`
+    mutation unpinChat($chatTitle: String!) {
+        unpinChat(chatTitle: $chatTitle)  {
+            title
         }
     }
 `

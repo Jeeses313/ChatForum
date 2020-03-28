@@ -40,3 +40,42 @@ export const COMMENT_ADDED = gql`
         }
     }
 `
+
+export const DELETE_COMMENT = gql`
+    mutation deleteComment($commentId: String!) {
+        deleteComment(commentId: $commentId)  {
+            content
+            id
+        }
+    }
+`
+
+export const COMMENT_DELETED = gql`
+    subscription {
+        commentDeleted {
+            content
+            id
+        }
+    }
+`
+
+export const EDIT_COMMENT = gql`
+    mutation editComment($commentId: String!, $content: String!) {
+        editComment(
+            commentId: $commentId
+            content: $content
+        ){
+            content
+            id
+        }
+    }
+`
+
+export const COMMENT_EDITED = gql`
+    subscription {
+        commentEdited {
+            content
+            id
+        }
+    }
+`

@@ -11,10 +11,14 @@ const schema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 3,
-    maxlength: 15
-  }
-
+    minlength: 3
+  },
+  pinnedChats: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Chat'
+    }
+  ]
 })
 
 schema.set('toJSON', {

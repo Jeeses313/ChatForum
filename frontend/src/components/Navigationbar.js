@@ -16,7 +16,7 @@ const Navigationbar = () => {
         window.localStorage.removeItem('logged-user')
         dispatch(setUser(null))
         dispatch(setToken(''))
-        dispatch(setNotification({ message: 'logged out', error: false }, 5))
+        dispatch(setNotification({ message: 'Logged out', error: false }, 5))
         history.push('/login')
     }
     return (

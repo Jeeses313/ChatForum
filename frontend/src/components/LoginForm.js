@@ -39,17 +39,19 @@ const LoginForm = () => {
     }
 
     return (
-        <div className='container'>
-            <h2>Login</h2>
+        <>
             <Notification></Notification>
-            <Form onSubmit={submit}>
-                <Form.Label>username:</Form.Label>
-                <Form.Control type="text" id='username' value={username} name="username" onChange={({ target }) => setUsername(target.value)} required />
-                <Form.Label>password:</Form.Label>
-                <Form.Control type="password" id='password' value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
-                <Button id='submit' type="submit">login</Button> or <Link to='/signin'>signin</Link>
-            </Form>
-        </div>
+            <div className='container'>
+                <h2>Login</h2>
+                <Form onSubmit={submit}>
+                    <Form.Label>username:</Form.Label>
+                    <Form.Control type="text" id='username' value={username} name="username" onChange={({ target }) => setUsername(target.value)} required />
+                    <Form.Label>password:</Form.Label>
+                    <Form.Control type="password" id='password' value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
+                    <Button id='submit' type="submit">login</Button> or <Link to='/signin'>signin</Link>
+                </Form>
+            </div>
+        </>
     )
 }
 

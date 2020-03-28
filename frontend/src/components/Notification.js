@@ -1,10 +1,15 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Alert } from 'react-bootstrap'
+import { setNotification } from '../reducers/notificationReducer'
 
 const Notification = () => {
     const notification = useSelector(state => state.notification)
-
+    const style = { position: 'absolute', width: '100%', textAlign: 'center' }
+    const dispatch = useDispatch()
+    const clearAlert = () => {
+        dispatch(setNotification(''))
+    }
     if (notification === '') {
         return (
             <></>
@@ -12,11 +17,11 @@ const Notification = () => {
     }
     if (notification.error) {
         return (
-            <Alert variant="danger" className='errormessage'>{notification.message}</Alert>
+            <Alert style={style} variant="danger" className='errormessage' onClick={clearAlert}>{notification.message}</Alert>
         )
     }
     return (
-        <Alert variant="success" className='message'>{notification.message}</Alert>
+        <Alert style={style} variant="success" className='message' onClick={clearAlert}>{notification.message}</Alert>
     )
 }
 

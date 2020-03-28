@@ -21,7 +21,8 @@ const ChatForm = () => {
         setTitle('')
     }
     useEffect(() => {
-        if(result.data) {
+        if (result.data) {
+            dispatch(setNotification({ message: 'New chat created', error: false }, 10))
             history.push(`/chats/${result.data.createChat.title}`)
         }
     }, [result.data]) // eslint-disable-line

@@ -6,6 +6,9 @@ export const LOGIN = gql`
             value
             user {
                 username
+                pinnedChats {
+                    title
+                }
             }
         }
     }
@@ -17,6 +20,9 @@ export const SIGNIN = gql`
             value
             user {
                 username
+                pinnedChats {
+                    title
+                }
             }
         }
     }
