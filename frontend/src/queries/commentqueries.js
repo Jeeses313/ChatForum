@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client'
 
 export const CREATE_COMMENT = gql`
-    mutation createComment($chatTitle: String!, $content: String!) {
-        createComment(chatTitle: $chatTitle, content: $content)  {
+    mutation createComment($chatTitle: String!, $content: String!, $imageUrl: String) {
+        createComment(chatTitle: $chatTitle, content: $content, imageUrl: $imageUrl)  {
             content
             date
+            imageUrl
             user{
                 username
             }
@@ -20,6 +21,7 @@ export const COMMENTS = gql`
             user{
                 username
             }
+            imageUrl
             id
         }
     }
@@ -34,6 +36,7 @@ export const COMMENT_ADDED = gql`
                 }
                 date
                 content
+                imageUrl
                 id
             }
             chatTitle
@@ -54,6 +57,7 @@ export const COMMENT_DELETED = gql`
     subscription {
         commentDeleted {
             content
+            imageUrl
             id
         }
     }
@@ -76,6 +80,7 @@ export const COMMENT_EDITED = gql`
         commentEdited {
             content
             id
+            imageUrl
         }
     }
 `

@@ -27,3 +27,12 @@ export const SIGNIN = gql`
         }
     }
 `
+
+export const USER = gql`
+    query user($username: String!) {
+        user(username: $username)  {
+            username
+            imageUrl
+        }
+    }
+`

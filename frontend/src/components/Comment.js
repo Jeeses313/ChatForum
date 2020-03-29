@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { Button } from 'react-bootstrap'
+import { Button, Image } from 'react-bootstrap'
 import { DELETE_COMMENT, EDIT_COMMENT } from '../queries/commentqueries'
+import { Link } from 'react-router-dom'
 
 const Comment = ({ comment }) => {
     const dispatch = useDispatch()
@@ -30,6 +31,10 @@ const Comment = ({ comment }) => {
             dispatch(setNotification({ message: 'Comment deleted', error: false }, 10))
         }
     }, [deleteResult.data]) // eslint-disable-line
+    let image = <></>
+    if (comment.imageUrl) {
+        image = <><Image src={comment.imageUrl} fluid></Image><br /></>
+    }
     const submitEdit = () => {
         if (window.confirm('Edit comment?')) {
             editComment({ variables: { commentId: comment.id, content: content } })
@@ -64,9 +69,10 @@ const Comment = ({ comment }) => {
     return (
         <div style={styleBox}>
             <div>
-                {comment.user.username} {date}
+                <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link> {date}
             </div>
             <textarea rows='2' value={content} readOnly={!editing} style={contentBoxStyle} onChange={({ target }) => setContent(target.value)} block='true' />
+            {image}
             {(currentUser.username === comment.user.username) && (comment.content !== 'Comment deleted') ?
                 <>
                     <Button type='button' size='sm' onClick={submitDelete}>Delete comment</Button>

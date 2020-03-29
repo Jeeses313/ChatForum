@@ -2,6 +2,7 @@ const { gql, UserInputError, AuthenticationError } = require('apollo-server-expr
 const { SECRET, NODE_ENV } = require('./utils/config')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const axios = require('axios')
 const User = require('./models/user')
 const Chat = require('./models/chat')
 const Comment = require('./models/comment')
@@ -15,6 +16,7 @@ const typeDefs = gql`
     type User {
         username: String!
         pinnedChats: [Chat!]!
+        imageUrl: String
         id: ID!
     }
 
@@ -30,6 +32,7 @@ const typeDefs = gql`
         user: User!
         date: Date!
         content: String!
+        imageUrl: String
         id: ID!
     }
 
@@ -45,8 +48,10 @@ const typeDefs = gql`
 
     type Query {
         me: User
+        user(username: String!): User!
         chats: [Chat!]!
         comments(chatTitle: String): [Comment!]!
+        pinnedChats: [Chat!]!
     }
 
     type Mutation {
@@ -64,6 +69,7 @@ const typeDefs = gql`
         createComment(
             chatTitle: String!
             content: String!
+            imageUrl: String
         ): Comment
         deleteComment(
             commentId: String!
@@ -113,6 +119,16 @@ const resolvers = {
         me: (root, args, context) => {
             return context.currentUser
         },
+        user: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError("Not authenticated")
+            }
+            const user = await User.findOne({ username: args.username })
+            if (!user) {
+                throw new UserInputError('User does not exist')
+            }
+            return { username: user.username, imageUrl: user.imageUrl }
+        },
         chats: async (root, args, { currentUser }) => {
             if (!currentUser) {
                 throw new AuthenticationError("Not authenticated")
@@ -152,6 +168,12 @@ const resolvers = {
                 return chat.comments
             }
             return await Comment.find({}).populate('user', { username: 1 })
+        },
+        pinnedChats: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError("Not authenticated")
+            }
+            return currentUser.pinnedChats
         }
     },
     Mutation: {
@@ -207,7 +229,21 @@ const resolvers = {
             if (!chat) {
                 throw new UserInputError('Chat does not exist')
             }
-            const comment = new Comment({ user: currentUser, content: args.content, date: new Date })
+            let comment
+            if (args.imageUrl && args.imageUrl !== '') {
+                let res
+                try {
+                    res = await axios.get(args.imageUrl)
+                } catch (e) {
+                    throw new UserInputError('Image does not exist')
+                }
+                if (!res.headers['content-type'].startsWith('image')) {
+                    throw new UserInputError('Image does not exist')
+                }
+                comment = new Comment({ user: currentUser, content: args.content, date: new Date, imageUrl: args.imageUrl })
+            } else {
+                comment = new Comment({ user: currentUser, content: args.content, date: new Date })
+            }
             return comment.save().then(async res => {
                 await Chat.findOneAndUpdate({ title: chat.title }, { comments: chat.comments.concat(res._id), latestComment: res })
                 pubsub.publish('COMMENT_ADDED', { commentAdded: { comment: res, chatTitle: args.chatTitle } })
@@ -224,7 +260,7 @@ const resolvers = {
             if (!currentUser || (comment.user.username !== currentUser.username)) {
                 throw new AuthenticationError("Not authenticated")
             }
-            return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted' }, { new: true }).then(async res => {
+            return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted', imageUrl: null }, { new: true }).then(async res => {
                 pubsub.publish('COMMENT_DELETED', { commentDeleted: res })
                 return res
             })

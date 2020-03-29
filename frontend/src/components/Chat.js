@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 
-const Chat = ({ chat, isPinned, submitPin, submitUnpin}) => {
+const Chat = ({ chat, isPinned, submitPin, submitUnpin }) => {
     let latestComment = 'No comments yet.'
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }
     let date = new Date(chat.date).toLocaleTimeString([], options)

@@ -25,6 +25,14 @@ export const CHATS = gql`
     }
 `
 
+export const PINNED_CHATS = gql`
+    query {
+        pinnedChats {
+            title
+        }
+    }
+`
+
 export const CHAT_ADDED = gql`
     subscription {
         chatAdded {

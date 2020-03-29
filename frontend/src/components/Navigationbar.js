@@ -30,7 +30,7 @@ const Navigationbar = () => {
                             <Button variant="outline-info" onClick={() => {history.push('/chats')}}>Chats</Button>
                         </Nav.Link>
                         <Nav.Link href="#" as="span">
-                            <div><Link to='/'>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
+                            <div><Link to={`/users/${user.username}`}>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

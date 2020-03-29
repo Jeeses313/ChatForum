@@ -4,9 +4,11 @@ import { useLazyQuery, useSubscription } from '@apollo/client'
 import { COMMENT_ADDED, COMMENTS, COMMENT_DELETED, COMMENT_EDITED } from '../queries/commentqueries'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
+import { useHistory } from 'react-router-dom'
 
 const ChatPage = () => {
     const [comments, setComments] = useState([])
+    const history = useHistory()
     const [commentsToShow, setCommentsToShow] = useState([])
     const [filter, setFilter] = useState('')
     const [loadComments, commentsResult] = useLazyQuery(COMMENTS)
@@ -24,11 +26,11 @@ const ChatPage = () => {
             setComments(commentsResult.data.comments.sort((commentA, commentB) => {
                 return commentA.date - commentB.date
             }))
+        } else if (commentsResult.called && !commentsResult.loading) {
+            history.push('/error/Chat does not exist')
         }
-    }, [commentsResult.data])
-    useEffect(() => {
-        scrollToBottom()
-    }, [comments])
+    }, [commentsResult]) //eslint-disable-line
+    useEffect(scrollToBottom, [comments, commentsToShow])
     useSubscription(COMMENT_ADDED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const newComment = subscriptionData.data.commentAdded.comment
@@ -45,7 +47,7 @@ const ChatPage = () => {
     useSubscription(COMMENT_DELETED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const deletedComment = subscriptionData.data.commentDeleted
-            setComments(comments.map(comment => comment.id === deletedComment.id ? { ...comment, content: deletedComment.content } : comment))
+            setComments(comments.map(comment => comment.id === deletedComment.id ? { ...comment, content: deletedComment.content, imageUrl: deletedComment.imageUrl } : comment))
         }
     })
     useSubscription(COMMENT_EDITED, {
@@ -68,7 +70,7 @@ const ChatPage = () => {
         padding: '10px',
         marginBottom: '10px',
         overflowY: 'scroll',
-        height: '70vh'
+        height: '67vh'
     }
 
     return (

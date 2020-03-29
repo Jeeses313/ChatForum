@@ -14,6 +14,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 1
+    },
+    imageUrl: {
+        type: String,
+        required: false
     }
 })
 
