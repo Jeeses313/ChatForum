@@ -27,6 +27,9 @@ const defaultOptions = {
     },
     query: {
         fetchPolicy: 'no-cache'
+    },
+    mutation: {
+        fetchPolicy: 'no-cache'
     }
 }
 

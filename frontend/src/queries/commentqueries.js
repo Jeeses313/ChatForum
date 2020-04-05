@@ -8,6 +8,7 @@ export const CREATE_COMMENT = gql`
             imageUrl
             user{
                 username
+                imageUrl
             }
         }
     }
@@ -20,6 +21,7 @@ export const COMMENTS = gql`
             date
             user{
                 username
+                imageUrl
             }
             imageUrl
             id
@@ -33,6 +35,7 @@ export const COMMENT_ADDED = gql`
             comment {
                 user { 
                     username
+                    imageUrl
                 }
                 date
                 content

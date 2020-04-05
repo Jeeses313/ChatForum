@@ -5,7 +5,7 @@ import { setNotification } from '../reducers/notificationReducer'
 
 const Notification = () => {
     const notification = useSelector(state => state.notification)
-    const style = { position: 'absolute', width: '100%', textAlign: 'center' }
+    const style = { position: 'absolute', width: '100%', textAlign: 'center', zIndex:9999 }
     const dispatch = useDispatch()
     const clearAlert = () => {
         dispatch(setNotification(''))

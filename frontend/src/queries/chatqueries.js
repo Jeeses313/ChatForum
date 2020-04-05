@@ -8,6 +8,14 @@ export const CREATE_CHAT = gql`
     }
 `
 
+export const DELETE_CHAT = gql`
+    mutation deleteChat($chatId: String!) {
+        deleteChat(chatId: $chatId)  {
+            title
+        }
+    }
+`
+
 export const CHATS = gql`
     query {
         chats {
@@ -45,6 +53,15 @@ export const CHAT_ADDED = gql`
                 }
             }
             date
+        }
+    }
+`
+
+export const CHAT_DELETED= gql`
+    subscription {
+        chatDeleted {
+            title
+            id
         }
     }
 `

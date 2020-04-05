@@ -18,6 +18,7 @@ const typeDefs = gql`
         pinnedChats: [Chat!]!
         imageUrl: String
         id: ID!
+        admin: Boolean!
     }
 
     type Chat {
@@ -26,6 +27,7 @@ const typeDefs = gql`
         latestComment: Comment
         date: Date!
         id: ID!
+        profileChat: Boolean!
     }
 
     type Comment {
@@ -78,17 +80,24 @@ const typeDefs = gql`
             commentId: String!
             content: String!
         ): Comment
+        deleteChat(
+            chatId: String!
+        ): Chat
         pinChat(
             chatTitle: String!
         ): Chat
         unpinChat(
             chatTitle: String!
         ): Chat
+        setUserProfilePic(
+            imageUrl: String!
+        ): User
     }  
 
     type Subscription {
         commentAdded: CommentSub!
         chatAdded: Chat!
+        chatDeleted: Chat!
         commentDeleted: Comment!
         commentEdited: Comment!
     }
@@ -133,7 +142,7 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError("Not authenticated")
             }
-            return await Chat.find({}).populate({
+            return await Chat.find({ profileChat: false }).populate({
                 path: 'comments',
                 model: 'Comment',
                 populate: {
@@ -183,13 +192,15 @@ const resolvers = {
             }
             const saltRounds = 10
             const password = await bcrypt.hash(args.password, saltRounds)
-            const user = new User({ username: args.username, password, pinnedChats: [] })
-            return user.save().then(res => {
+            const user = new User({ username: args.username, password, pinnedChats: [], admin: false })
+            return user.save().then(async res => {
                 const userForToken = {
                     username: res.username,
                     id: res._id,
                 }
-                return { value: jwt.sign(userForToken, SECRET), user: { username: res.username, pinnedChats: [] } }
+                const userChat = new Chat({ title: `userChat${res.username}`, comments: [], date: new Date, profileChat: true })
+                await userChat.save()
+                return { value: jwt.sign(userForToken, SECRET), user: { username: res.username, pinnedChats: [], admin: false } }
             })
                 .catch(error => {
                     throw new UserInputError('Username and password must be 3-15 characters long and username must be unique')
@@ -207,18 +218,36 @@ const resolvers = {
                 id: user._id,
             }
 
-            return { value: jwt.sign(userForToken, SECRET), user: { username: user.username, pinnedChats: user.pinnedChats } }
+            return { value: jwt.sign(userForToken, SECRET), user: { username: user.username, pinnedChats: user.pinnedChats, admin: user.admin } }
         },
         createChat: async (root, args, { currentUser }) => {
             if (!currentUser) {
                 throw new AuthenticationError("Not authenticated")
             }
-            const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date })
+            if(args.chatTitle.startsWith('userChat')) {
+                throw new UserInputError('Title cannot start with userChat')
+            }
+            const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date, profileChat: false })
             return chat.save().then(async res => {
                 pubsub.publish('CHAT_ADDED', { chatAdded: res })
                 return res
             }).catch(error => {
                 throw new UserInputError('Title must be at least 3 characters long and unique')
+            })
+        },
+        deleteChat: async (root, args, { currentUser }) => {
+            if (!currentUser || !currentUser.admin) {
+                throw new AuthenticationError("Not authenticated")
+            }
+            const chat = await Chat.findById(args.chatId).populate('comments')
+            if (!chat) {
+                return
+            }
+            return Chat.findByIdAndDelete(chat.id).then(async res => {
+                const commentIds = chat.comments.map(comment => comment.id)
+                await Comment.deleteMany({ _id: { $in: commentIds } })
+                pubsub.publish('CHAT_DELETED', { chatDeleted: chat })
+                return chat
             })
         },
         createComment: async (root, args, { currentUser }) => {
@@ -257,7 +286,7 @@ const resolvers = {
             if (!comment) {
                 return
             }
-            if (!currentUser || (comment.user.username !== currentUser.username)) {
+            if (!currentUser || (comment.user.username !== currentUser.username && !currentUser.admin)) {
                 throw new AuthenticationError("Not authenticated")
             }
             return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted', imageUrl: null }, { new: true }).then(async res => {
@@ -276,7 +305,7 @@ const resolvers = {
             if (args.content === '') {
                 throw new UserInputError('Content of comment must be at least 1 characters long')
             }
-            return Comment.findByIdAndUpdate(comment.id, { content: args.content }, { new: true }).then(async res => {
+            return Comment.findByIdAndUpdate(comment.id, { content: `${args.content} -edited` }, { new: true }).then(async res => {
                 pubsub.publish('COMMENT_EDITED', { commentEdited: res })
                 return res
             })
@@ -308,6 +337,23 @@ const resolvers = {
             }
             await User.findOneAndUpdate({ username: currentUser.username }, { pinnedChats: currentUser.pinnedChats.filter(fchat => fchat.title !== chat.title) })
             return chat
+        },
+        setUserProfilePic: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError("Not authenticated")
+            }
+            let res
+            try {
+                res = await axios.get(args.imageUrl)
+            } catch (e) {
+                throw new UserInputError('Image does not exist')
+            }
+            if (!res.headers['content-type'].startsWith('image')) {
+                throw new UserInputError('Image does not exist')
+            }
+            return User.findOneAndUpdate({ username: currentUser.username }, { imageUrl: args.imageUrl }, { new: true }).then(res => {
+                return { username: res.username, pinnedChats: res.pinnedChats, imageUrl: res.imageUrl }
+            })
         }
     },
 
@@ -317,6 +363,9 @@ const resolvers = {
         },
         chatAdded: {
             subscribe: () => pubsub.asyncIterator(['CHAT_ADDED'])
+        },
+        chatDeleted: {
+            subscribe: () => pubsub.asyncIterator(['CHAT_DELETED'])
         },
         commentDeleted: {
             subscribe: () => pubsub.asyncIterator(['COMMENT_DELETED'])

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
-import { CHAT_ADDED, CHATS, PINNED_CHATS } from '../queries/chatqueries'
+import { CHAT_ADDED, CHATS, PINNED_CHATS, CHAT_DELETED } from '../queries/chatqueries'
 import { COMMENT_ADDED } from '../queries/commentqueries'
-import Chat from './Chat'
+import Chat from './ChatListing'
 import ChatForm from './ChatForm'
 import { useDispatch } from 'react-redux'
 import { UNPIN_CHAT, PIN_CHAT } from '../queries/chatqueries'
@@ -104,6 +104,12 @@ const ChatsPage = () => {
             dispatch(setNotification({ message: 'Chat unpinned', error: false }, 10))
         }
     }, [unpinResult.data]) // eslint-disable-line
+    useSubscription(CHAT_DELETED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const deletedChat = subscriptionData.data.chatDeleted
+            setChats(chats.filter(chat => chat.id !== deletedChat.id))
+        }
+    })
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',

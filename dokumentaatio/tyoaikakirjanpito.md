@@ -8,5 +8,6 @@
 | 22.3 |   4    | frontendin build backendiin, sovellus herokuun, aiempiin liittyvien korjausten tutkimista ja toteuttamista    |
 | 28.3 |    4   |  kommenttien poistaminen ja editointi ja niihin liittyvät tilaukset, chattien ja kommenttien filtteröiminen, ilmoitusten näyttämisen muokkaus ja ilmoitusten piilottaminen klikkaamalla, chattien "pinnauksen" toteutuksen aloitus    |  
 | 29.3 |    4   |  chattien "pinnaus", kuvien näyttäminen kommenteissa, käyttäjän profiilisivun ja profiilikuvan käytön toteutuksen aloitus, virhesivu ja sen käyttäminen, kun haettua chattia tai käyttäjää ei löydy   |
-| yht |    24,5   |     |
+| 5.4 |    4   |  profiilikuvan asettaminen ja näkyminen profiilissa ja kommenteissa, profiili chatti, admin status, jonka voi asettaa tietokannasta, ja tällaisen omaavalle oikeus poistaa kommentteja ja chatteja   |
+| yht |    28,5   |     |
 

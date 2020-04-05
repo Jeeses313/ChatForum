@@ -18,7 +18,15 @@ const schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Chat'
     }
-  ]
+  ],
+  imageUrl: {
+    type: String,
+    required: false
+  },
+  admin: {
+    type: Boolean,
+    required: true
+  }
 })
 
 schema.set('toJSON', {

@@ -35,6 +35,10 @@ const Comment = ({ comment }) => {
     if (comment.imageUrl) {
         image = <><Image src={comment.imageUrl} fluid></Image><br /></>
     }
+    let profileImage = <></>
+    if (comment.user.imageUrl) {
+        profileImage = <><Image style={{ height: '10%', width: '10%' }} src={comment.user.imageUrl} fluid></Image></>
+    }
     const submitEdit = () => {
         if (window.confirm('Edit comment?')) {
             editComment({ variables: { commentId: comment.id, content: content } })
@@ -49,6 +53,12 @@ const Comment = ({ comment }) => {
     const stopEditing = () => {
         setEditing(false)
         setContent(comment.content)
+    }
+    const startEditing = () => {
+        setEditing(true)
+        if (comment.content.endsWith(' -edited')) {
+            setContent(comment.content.substring(0, comment.content.length - 8))
+        }
     }
     useEffect(() => {
         setContent(comment.content)
@@ -69,11 +79,11 @@ const Comment = ({ comment }) => {
     return (
         <div style={styleBox}>
             <div>
-                <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link> {date}
+                {profileImage} <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link> {date}
             </div>
             <textarea rows='2' value={content} readOnly={!editing} style={contentBoxStyle} onChange={({ target }) => setContent(target.value)} block='true' />
             {image}
-            {(currentUser.username === comment.user.username) && (comment.content !== 'Comment deleted') ?
+            {(currentUser.username === comment.user.username || currentUser.admin) && (comment.content !== 'Comment deleted') ?
                 <>
                     <Button type='button' size='sm' onClick={submitDelete}>Delete comment</Button>
                     {editing ?
@@ -82,7 +92,13 @@ const Comment = ({ comment }) => {
                             <Button type='button' size='sm' onClick={submitEdit}>Submit edit</Button>
                         </>
                         :
-                        <Button type='button' size='sm' onClick={() => setEditing(true)}>Start editing</Button>
+                        <>
+                            {(currentUser.username === comment.user.username) ?
+                                <Button type='button' size='sm' onClick={startEditing}>Start editing</Button>
+                                :
+                                <></>
+                            }
+                        </>
                     }
                 </>
                 :

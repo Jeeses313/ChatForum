@@ -20,6 +20,10 @@ const schema = new mongoose.Schema({
     latestComment: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
+    },
+    profileChat: {
+        type: Boolean,
+        required: true
     }
 })
 

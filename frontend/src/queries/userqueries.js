@@ -9,6 +9,7 @@ export const LOGIN = gql`
                 pinnedChats {
                     title
                 }
+                admin
             }
         }
     }
@@ -23,6 +24,7 @@ export const SIGNIN = gql`
                 pinnedChats {
                     title
                 }
+                admin
             }
         }
     }
@@ -35,4 +37,13 @@ export const USER = gql`
             imageUrl
         }
     }
+`
+
+export const SET_PROFILEPIC = gql`
+mutation setUserProfilePic($imageUrl: String!) {
+    setUserProfilePic(imageUrl: $imageUrl)  {
+        username
+        imageUrl
+    }
+}
 `
