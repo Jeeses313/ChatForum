@@ -120,7 +120,7 @@ const ChatsPage = () => {
         padding: '10px',
         marginBottom: '0',
         overflowY: 'scroll',
-        height: '78vh'
+        height: '77vh'
     }
     return (
         <div>

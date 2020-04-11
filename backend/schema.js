@@ -188,7 +188,7 @@ const resolvers = {
     },
     Mutation: {
         createUser: async (root, args) => {
-            if (args.password.length < 3) {
+            if (args.password.length < 3 || args.password.length > 15) {
                 throw new UserInputError('Username and password must be 3-15 characters long and username must be unique')
             }
             const saltRounds = 10

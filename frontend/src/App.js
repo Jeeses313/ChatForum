@@ -9,7 +9,6 @@ const App = () => {
     const token = useSelector(state => state.token)
     return (
         <div style={{
-            position: 'fixed',
             width: '100%',
             height: '100%',
             left: 0,
