@@ -23,23 +23,19 @@ const CommentForm = ({ title }) => {
         send({ variables: { chatTitle: title, content, imageUrl } })
     }
     return (
-        <>
+        <div>
             <Form onSubmit={submit}>
                 <Row size='lg'>
-                    <Col md='10'>
+                    <Col md='10' style={{ paddingRight: '0' }}>
                         <Form.Control as='textarea' rows='2' style={{ resize: 'none' }} id='content' value={content} name='content' onChange={({ target }) => setContent(target.value)} placeholder='New comment...' required block='true' />
+                        <Form.Control size="sm" type="text" placeholder="Image url..." value={imageUrl} name='imageUrl' id='imageUrl' onChange={({ target }) => setImageUrl(target.value)} block='true'></Form.Control>
                     </Col>
-                    <Col md='2'>
-                        <Button id='submit' type='submit' size='lg' block>Send</Button>
-                    </Col>
-                </Row>
-                <Row size='lg'>
-                    <Col md='10'>
-                        <Form.Control size="sm" type="text" placeholder="Image url..." value={imageUrl} name='imageUrl' id='imageUrl' onChange={({ target }) => setImageUrl(target.value)}></Form.Control>
+                    <Col md='2' style={{ paddingLeft: '0' }}>
+                        <Button style={{ height: '100%' }} id='submit' type='submit' size='lg' block>Send</Button>
                     </Col>
                 </Row>
             </Form>
-        </>
+        </div>
     )
 }
 

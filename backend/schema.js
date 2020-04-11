@@ -92,6 +92,7 @@ const typeDefs = gql`
         setUserProfilePic(
             imageUrl: String!
         ): User
+        deleteUserProfilePic: User
     }  
 
     type Subscription {
@@ -224,7 +225,7 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError("Not authenticated")
             }
-            if(args.chatTitle.startsWith('userChat')) {
+            if (args.chatTitle.startsWith('userChat')) {
                 throw new UserInputError('Title cannot start with userChat')
             }
             const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date, profileChat: false })
@@ -232,7 +233,7 @@ const resolvers = {
                 pubsub.publish('CHAT_ADDED', { chatAdded: res })
                 return res
             }).catch(error => {
-                throw new UserInputError('Title must be at least 3 characters long and unique')
+                throw new UserInputError('Title must be 3-15 characters long and unique')
             })
         },
         deleteChat: async (root, args, { currentUser }) => {
@@ -352,6 +353,14 @@ const resolvers = {
                 throw new UserInputError('Image does not exist')
             }
             return User.findOneAndUpdate({ username: currentUser.username }, { imageUrl: args.imageUrl }, { new: true }).then(res => {
+                return { username: res.username, pinnedChats: res.pinnedChats, imageUrl: res.imageUrl }
+            })
+        },
+        deleteUserProfilePic: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError("Not authenticated")
+            }
+            return User.findOneAndUpdate({ username: currentUser.username }, { imageUrl: null }, { new: true }).then(res => {
                 return { username: res.username, pinnedChats: res.pinnedChats, imageUrl: res.imageUrl }
             })
         }

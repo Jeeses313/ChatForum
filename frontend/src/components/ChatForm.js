@@ -30,11 +30,11 @@ const ChatForm = () => {
         <>
             <Form onSubmit={submit}>
                 <Row size="lg">
-                    <Col md="10">
+                    <Col md="10" style={{ paddingRight: '0' }}>
                         <Form.Control as="textarea" rows="1" style={{ resize: 'none' }} id='content' value={title} name="content" onChange={({ target }) => setTitle(target.value)} placeholder='Title...' required block='true' />
                     </Col>
-                    <Col md="2">
-                        <Button id='submit' type="submit" size="lg" block>Start new chat</Button>
+                    <Col md="2" style={{ paddingLeft: '0' }}>
+                        <Button style={{ height: '100%' }} id='submit' type="submit" size="lg" block='true'>Start new chat</Button>
                     </Col>
                 </Row>
             </Form>

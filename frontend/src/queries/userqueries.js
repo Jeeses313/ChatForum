@@ -47,3 +47,12 @@ mutation setUserProfilePic($imageUrl: String!) {
     }
 }
 `
+
+export const DELETE_PROFILEPIC = gql`
+mutation deleteUserProfilePic {
+    deleteUserProfilePic {
+        username
+        imageUrl
+    }
+}
+`

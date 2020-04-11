@@ -3,14 +3,14 @@ import Navigationbar from './Navigationbar'
 import ChatsPage from './ChatsPage'
 import ChatPage from './ChatPage'
 import ProfilePage from './ProfilePage'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import ErrorPage from './ErrorPage'
 
 const LoggedInPage = () => {
     return (
         <>
             <Navigationbar></Navigationbar>
-            <div className='container'>
+            <div className='container' style={{ height: '100%' }}>
                 <Switch>
                     <Route path='/error/:errormessage'>
                         <ErrorPage></ErrorPage>
@@ -25,7 +25,7 @@ const LoggedInPage = () => {
                         <ProfilePage></ProfilePage>
                     </Route>
                     <Route path='/'>
-                        <h1>Welcome</h1>
+                        <Redirect to='/chats'></Redirect>
                     </Route>
                 </Switch>
             </div>

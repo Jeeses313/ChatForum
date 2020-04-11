@@ -8,18 +8,25 @@ import { useSelector } from 'react-redux'
 const App = () => {
     const token = useSelector(state => state.token)
     return (
-        <div>
+        <div style={{
+            position: 'fixed',
+            width: '100%',
+            height: '100%',
+            left: 0,
+            top: 0,
+            zIndex: 10,
+        }}>
             <Switch>
                 <Route path='/signin'>
                     {token ?
-                        <Redirect to='/login'></Redirect>
+                        <Redirect to='/chats'></Redirect>
                         :
                         <SigninForm></SigninForm>
                     }
                 </Route>
                 <Route path='/login'>
                     {token ?
-                        <Redirect to='/login'></Redirect>
+                        <Redirect to='/chats'></Redirect>
                         :
                         <LoginForm></LoginForm>
                     }

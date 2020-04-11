@@ -6,10 +6,10 @@ const ChatPage = () => {
     const match = useRouteMatch('/chats/:title')
     const title = match ? match.params.title : null
     return (
-        <>
-            <h2 style={{ display: 'inline-block' }}>{title}</h2>
+        <div>
+            <h2 style={{ display: 'inline-block', marginBottom: '0' }}>{title}</h2>
             <Chat title={title}></Chat>
-        </>
+        </div>
     )
 }
 

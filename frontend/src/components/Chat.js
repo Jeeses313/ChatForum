@@ -68,14 +68,15 @@ const Chat = ({ title }) => {
         borderRadius: '5px',
         borderColor: 'grey',
         padding: '10px',
-        marginBottom: '10px',
+        marginBottom: '0',
         overflowY: 'scroll',
-        height: '67vh'
+        height: '70vh',
+        width: '100%'
     }
     return (
         <>
-            <input style={{ float: 'right', bottom: '0%', width: '30%' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
-            <br/>
+            <input style={{ float: 'right', width: '30%', paddingBottom: '0', position: 'relative', bottom: '-1.7vh' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
+            <br />
             <div style={styleBox}>
                 {comments.length === 0 ?
                     <div>No comments yet</div>
