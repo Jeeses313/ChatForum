@@ -10,5 +10,5 @@
 | 29.3 |    4   |  chattien "pinnaus", kuvien näyttäminen kommenteissa, käyttäjän profiilisivun ja profiilikuvan käytön toteutuksen aloitus, virhesivu ja sen käyttäminen, kun haettua chattia tai käyttäjää ei löydy   |
 | 5.4 |    4   |  profiilikuvan asettaminen ja näkyminen profiilissa ja kommenteissa, profiili chatti, admin status, jonka voi asettaa tietokannasta, ja tällaisen omaavalle oikeus poistaa kommentteja ja chatteja   |
 | 11.4 |    2   |  chattien sivun, yksittäisen chatin sivun ja profiilisivun ulkonäön parantaminen, profiilikuvan poistaminen, sivujen uudelleen ohjautumisen korjaus   |
-| yht |    28,5   |     |
+| yht |    30,5   |     |
 
