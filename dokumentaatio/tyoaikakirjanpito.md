@@ -9,6 +9,6 @@
 | 28.3 |    4   |  kommenttien poistaminen ja editointi ja niihin liittyvät tilaukset, chattien ja kommenttien filtteröiminen, ilmoitusten näyttämisen muokkaus ja ilmoitusten piilottaminen klikkaamalla, chattien "pinnauksen" toteutuksen aloitus    |  
 | 29.3 |    4   |  chattien "pinnaus", kuvien näyttäminen kommenteissa, käyttäjän profiilisivun ja profiilikuvan käytön toteutuksen aloitus, virhesivu ja sen käyttäminen, kun haettua chattia tai käyttäjää ei löydy   |
 | 5.4 |    4   |  profiilikuvan asettaminen ja näkyminen profiilissa ja kommenteissa, profiili chatti, admin status, jonka voi asettaa tietokannasta, ja tällaisen omaavalle oikeus poistaa kommentteja ja chatteja   |
-| 11.4 |    2   |  chattien sivun, yksittäisen chatin sivun ja profiilisivun ulkonäön parantaminen, profiilikuvan poistaminen, sivujen uudelleen ohjautumisen korjaus   |
-| yht |    30,5   |     |
+| 11.4 |    3   |  chattien sivun, yksittäisen chatin sivun ja profiilisivun ulkonäön parantaminen, profiilikuvan poistaminen, sivujen uudelleen ohjautumisen korjaus, käyttöohjeiden aloitus ja uusien toimintojen/korjausten miettiminen   |
+| yht |    31,5   |     |
 
