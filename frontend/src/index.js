@@ -10,6 +10,7 @@ import { Provider } from 'react-redux'
 import store from './store'
 import { setUser } from './reducers/userReducer'
 import { setToken } from './reducers/tokenReducer'
+import { setMode } from './reducers/modeReducer'
 const authLink = setContext((_, { headers }) => {
     const token = localStorage.getItem('user-token')
     return {
@@ -63,10 +64,16 @@ const client = new ApolloClient({
 
 const loggedToken = localStorage.getItem('user-token')
 const loggedUser = localStorage.getItem('logged-user')
+const mode = localStorage.getItem('mode')
 if (loggedToken) {
     store.dispatch(setToken(loggedToken))
 }
 if (loggedUser) {
     store.dispatch(setUser(JSON.parse(loggedUser)))
+}
+if (mode) {
+    store.dispatch(setMode(mode))
+} else {
+    store.dispatch(setMode('light'))
 }
 ReactDOM.render(<ApolloProvider client={client}><Provider store={store}><Router><App /></Router></Provider></ApolloProvider>, document.getElementById('root'))

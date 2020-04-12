@@ -1,6 +1,7 @@
 const reducer = (state = 'light', action) => {
     switch (action.type) {
         case 'SET_MODE': {
+            localStorage.setItem('mode', action.data)
             return action.data
         }
         default: return state
