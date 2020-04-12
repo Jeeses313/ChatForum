@@ -17,7 +17,7 @@ const ChatsPage = () => {
     const [filter, setFilter] = useState('')
     const [pinnedChats, setPinnedChats] = useState()
     const sortChats = useCallback((chatA, chatB) => {
-        if(!pinnedChats) {
+        if (!pinnedChats) {
             return 0
         }
         if (pinnedChats.includes(chatA.title) && !pinnedChats.includes(chatB.title)) {
@@ -127,9 +127,16 @@ const ChatsPage = () => {
             <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
             <input style={{ float: 'right', width: '30%', paddingBottom: '0', position: 'relative', bottom: '-1.7vh' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
             <div style={styleBox}>
-                {chatsToShow.map(chat =>
-                    <Chat key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></Chat>
-                )}
+                {pinnedChats ?
+                    <>
+                        {chatsToShow.map(chat =>
+                            <Chat key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></Chat>
+                        )}
+                    </>
+                    :
+                    <div>Loading</div>
+                }
+
             </div>
             <ChatForm></ChatForm>
         </div>

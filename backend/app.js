@@ -4,6 +4,13 @@ const app = express()
 const cors = require('cors')
 app.use(cors())
 app.use(express.static('build'))
+app.get('*', (req, res) => {
+    res.sendFile(`${__dirname}/build/index.html`, (err) => {
+        if (err) {
+          res.status(500).send(err)
+        }
+      })
+})
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
