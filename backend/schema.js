@@ -35,6 +35,7 @@ const typeDefs = gql`
         date: Date!
         content: String!
         imageUrl: String
+        hasVideo: Boolean
         id: ID!
     }
 
@@ -79,6 +80,7 @@ const typeDefs = gql`
         editComment(
             commentId: String!
             content: String!
+            imageUrl: String
         ): Comment
         deleteChat(
             chatId: String!
@@ -265,12 +267,25 @@ const resolvers = {
                 try {
                     res = await axios.get(args.imageUrl)
                 } catch (e) {
-                    throw new UserInputError('Image does not exist')
+                    throw new UserInputError('Image or video does not exist')
                 }
                 if (!res.headers['content-type'].startsWith('image')) {
-                    throw new UserInputError('Image does not exist')
+                    const getId = (url) => {
+                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+                        const match = url.match(regExp);
+
+                        return (match && match[2].length === 11)
+                            ? match[2]
+                            : null;
+                    }
+                    const videoId = getId(args.imageUrl)
+                    if (!videoId) {
+                        throw new UserInputError('Image or video does not exist')
+                    }
+                    comment = new Comment({ user: currentUser, content: args.content, date: new Date, imageUrl: `https://www.youtube.com/embed/${videoId}`, hasVideo: true })
+                } else {
+                    comment = new Comment({ user: currentUser, content: args.content, date: new Date, imageUrl: args.imageUrl, hasVideo: false })
                 }
-                comment = new Comment({ user: currentUser, content: args.content, date: new Date, imageUrl: args.imageUrl })
             } else {
                 comment = new Comment({ user: currentUser, content: args.content, date: new Date })
             }
@@ -305,6 +320,40 @@ const resolvers = {
             }
             if (args.content === '') {
                 throw new UserInputError('Content of comment must be at least 1 characters long')
+            }
+            if (comment.imageUrl !== args.imageUrl) {
+                let imageUrl = ''
+                let hasVideo = false
+                if (args.imageUrl !== '') {
+                    let res
+                    try {
+                        res = await axios.get(args.imageUrl)
+                    } catch (e) {
+                        throw new UserInputError('Image or video does not exist')
+                    }
+                    if (!res.headers['content-type'].startsWith('image')) {
+                        const getId = (url) => {
+                            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+                            const match = url.match(regExp);
+
+                            return (match && match[2].length === 11)
+                                ? match[2]
+                                : null;
+                        }
+                        const videoId = getId(args.imageUrl)
+                        if (!videoId) {
+                            throw new UserInputError('Image or video does not exist')
+                        }
+                        hasVideo = true
+                        imageUrl = `https://www.youtube.com/embed/${videoId}`
+                    } else {
+                        imageUrl = args.imageUrl
+                    }
+                }
+                return Comment.findByIdAndUpdate(comment.id, { content: `${args.content} -edited`, imageUrl: imageUrl, hasVideo: hasVideo }, { new: true }).then(async res => {
+                    pubsub.publish('COMMENT_EDITED', { commentEdited: res })
+                    return res
+                })
             }
             return Comment.findByIdAndUpdate(comment.id, { content: `${args.content} -edited` }, { new: true }).then(async res => {
                 pubsub.publish('COMMENT_EDITED', { commentEdited: res })

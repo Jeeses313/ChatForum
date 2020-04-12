@@ -9,8 +9,10 @@ import { Link } from 'react-router-dom'
 const Comment = ({ comment }) => {
     const dispatch = useDispatch()
     const currentUser = useSelector(state => state.user)
+    const mode = useSelector(state => state.mode)
     const [content, setContent] = useState(comment.content)
     const [editing, setEditing] = useState(false)
+    const [imageUrl, setImageUrl] = useState(comment.imageUrl)
     const [deleteComment, deleteResult] = useMutation(DELETE_COMMENT, { // eslint-disable-line
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -33,7 +35,16 @@ const Comment = ({ comment }) => {
     }, [deleteResult.data]) // eslint-disable-line
     let image = <></>
     if (comment.imageUrl) {
-        image = <><Image src={comment.imageUrl} fluid></Image><br /></>
+        if (comment.hasVideo) {
+            image = <><iframe width="420" height="315"
+                frameBorder='0'
+                allowFullScreen
+                title='video'
+                src={comment.imageUrl}>
+            </iframe><br /></>
+        } else {
+            image = <><Image src={comment.imageUrl} fluid></Image><br /></>
+        }
     }
     let profileImage = <></>
     if (comment.user.imageUrl) {
@@ -41,7 +52,7 @@ const Comment = ({ comment }) => {
     }
     const submitEdit = () => {
         if (window.confirm('Edit comment?')) {
-            editComment({ variables: { commentId: comment.id, content: content } })
+            editComment({ variables: { commentId: comment.id, content: content, imageUrl: imageUrl } })
         }
     }
     useEffect(() => {
@@ -52,6 +63,7 @@ const Comment = ({ comment }) => {
     }, [editResult.data]) // eslint-disable-line
     const stopEditing = () => {
         setEditing(false)
+        setImageUrl(comment.imageUrl)
         setContent(comment.content)
     }
     const startEditing = () => {
@@ -74,6 +86,14 @@ const Comment = ({ comment }) => {
         resize: 'none',
         border: 'none'
     }
+    const urlStyle = { borderColor: 'grey', width: '100%' }
+    if (mode === 'light') {
+        contentBoxStyle.backgroundColor = 'white'
+        urlStyle.backgroundColor = 'white'
+    } else {
+        contentBoxStyle.backgroundColor = 'darkgray'
+        urlStyle.backgroundColor = 'darkgray'
+    }
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }
     const date = new Date(comment.date).toLocaleTimeString([], options)
     return (
@@ -83,6 +103,13 @@ const Comment = ({ comment }) => {
             </div>
             <textarea rows='2' value={content} readOnly={!editing} style={contentBoxStyle} onChange={({ target }) => setContent(target.value)} block='true' />
             {image}
+            {editing ?
+                <>
+                    <input type='text' style={urlStyle} placeholder="Image/video url..." value={imageUrl} onChange={({ target }) => setImageUrl(target.value)} block='true'></input><br />
+                </>
+                :
+                <></>
+            }
             {(currentUser.username === comment.user.username || currentUser.admin) && (comment.content !== 'Comment deleted') ?
                 <>
                     <Button type='button' size='sm' onClick={submitDelete}>Delete comment</Button>

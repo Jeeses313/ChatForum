@@ -6,9 +6,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setUser } from '../reducers/userReducer'
 import { setToken } from '../reducers/tokenReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { setMode } from '../reducers/modeReducer'
 
 const Navigationbar = () => {
     const user = useSelector(state => state.user)
+    const mode = useSelector(state => state.mode)
     const dispatch = useDispatch()
     const history = useHistory()
     const handleLogout = () => {
@@ -19,25 +21,55 @@ const Navigationbar = () => {
         dispatch(setNotification({ message: 'Logged out', error: false }, 5))
         history.push('/login')
     }
-    return (
-        <>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-                <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="#" as="span">
-                            <Button variant="outline-info" onClick={() => {history.push('/chats')}}>Chats</Button>
-                        </Nav.Link>
-                        <Nav.Link href="#" as="span">
-                            <div><Link to={`/users/${user.username}`}>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
-                        </Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-            <Notification></Notification>
-        </>
-    )
+    if (user) {
+        return (
+            <>
+                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                    <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Link href="#" as="span">
+                                <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
+                            </Nav.Link>
+                            <Nav.Link href="#" as="span">
+                                {mode === 'light' ?
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    :
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                }
+                            </Nav.Link>
+                            <Nav.Link href="#" as="span">
+                                <div><Link to={`/users/${user.username}`}>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Notification></Notification>
+            </>
+        )
+    } else {
+        return (
+            <>
+                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                    <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Link href="#" as="span">
+                                {mode === 'light' ?
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    :
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                }
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Notification></Notification>
+            </>
+        )
+    }
 }
 
 export default Navigationbar

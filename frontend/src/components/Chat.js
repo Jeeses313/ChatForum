@@ -4,10 +4,12 @@ import { COMMENT_ADDED, COMMENTS, COMMENT_DELETED, COMMENT_EDITED } from '../que
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Chat = ({ title }) => {
     const [comments, setComments] = useState([])
     const history = useHistory()
+    const mode = useSelector(state => state.mode)
     const [commentsToShow, setCommentsToShow] = useState([])
     const [filter, setFilter] = useState('')
     const [loadComments, commentsResult] = useLazyQuery(COMMENTS)
@@ -53,7 +55,7 @@ const Chat = ({ title }) => {
     useSubscription(COMMENT_EDITED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const editedComment = subscriptionData.data.commentEdited
-            setComments(comments.map(comment => comment.id === editedComment.id ? { ...comment, content: editedComment.content } : comment))
+            setComments(comments.map(comment => comment.id === editedComment.id ? { ...comment, content: editedComment.content, imageUrl: editedComment.imageUrl, hasVideo: editedComment.hasVideo } : comment))
         }
     })
     useEffect(() => {
@@ -73,9 +75,15 @@ const Chat = ({ title }) => {
         height: '70vh',
         width: '100%'
     }
+    const filterStyle = { float: 'right', width: '30%', paddingBottom: '0', borderColor: 'grey' }
+    if (mode === 'light') {
+        filterStyle.backgroundColor = 'white'
+    } else {
+        filterStyle.backgroundColor = 'darkgray'
+    }
     return (
         <>
-            <input style={{ float: 'right', width: '30%', paddingBottom: '0', position: 'relative', bottom: '-1.7vh' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
+            <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
             <br />
             <div style={styleBox}>
                 {comments.length === 0 ?

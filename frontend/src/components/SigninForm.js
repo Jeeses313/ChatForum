@@ -6,7 +6,7 @@ import Notification from './Notification'
 import { setNotification } from '../reducers/notificationReducer'
 import { setToken } from '../reducers/tokenReducer'
 import { setUser } from '../reducers/userReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, Link } from 'react-router-dom'
 
 const SigninForm = () => {
@@ -14,6 +14,7 @@ const SigninForm = () => {
     const [password, setPassword] = useState('')
     const dispatch = useDispatch()
     const history = useHistory()
+    const mode = useSelector(state => state.mode)
     const [signin, result] = useMutation(SIGNIN, {
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -37,6 +38,12 @@ const SigninForm = () => {
         setUsername('')
         setPassword('')
     }
+    const style = { borderColor: 'grey' }
+    if (mode === 'light') {
+        style.backgroundColor = 'white'
+    } else {
+        style.backgroundColor = 'darkgray'
+    }
     return (
         <>
             <Notification></Notification>
@@ -44,9 +51,9 @@ const SigninForm = () => {
                 <h2>Sign in</h2>
                 <Form onSubmit={submit}>
                     <Form.Label>username:</Form.Label>
-                    <Form.Control type="text" id='username' value={username} name="username" onChange={({ target }) => setUsername(target.value)} required />
+                    <Form.Control type="text" id='username' style={style} value={username} name="username" onChange={({ target }) => setUsername(target.value)} required />
                     <Form.Label>password:</Form.Label>
-                    <Form.Control type="password" id='password' value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
+                    <Form.Control type="password" id='password' style={style} value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
                     <Button id='submit' type="submit">sign in</Button> or <Link to='/login'>login</Link>
                 </Form>
             </div>

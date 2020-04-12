@@ -4,12 +4,13 @@ import { CHAT_ADDED, CHATS, PINNED_CHATS, CHAT_DELETED } from '../queries/chatqu
 import { COMMENT_ADDED } from '../queries/commentqueries'
 import Chat from './ChatListing'
 import ChatForm from './ChatForm'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { UNPIN_CHAT, PIN_CHAT } from '../queries/chatqueries'
 import { setNotification } from '../reducers/notificationReducer'
 
 const ChatsPage = () => {
     const dispatch = useDispatch()
+    const mode = useSelector(state => state.mode)
     const [chats, setChats] = useState([])
     const [loadChats, chatsResult] = useLazyQuery(CHATS)
     const [loadPinnedChats, pinnedChatsResult] = useLazyQuery(PINNED_CHATS)
@@ -120,12 +121,18 @@ const ChatsPage = () => {
         padding: '10px',
         marginBottom: '0',
         overflowY: 'scroll',
-        height: '77vh'
+        height: '77.5vh'
+    }
+    const filterStyle = { float: 'right', width: '30%', paddingBottom: '0', borderColor: 'grey' }
+    if (mode === 'light') {
+        filterStyle.backgroundColor = 'white'
+    } else {
+        filterStyle.backgroundColor = 'darkgray'
     }
     return (
-        <div>
+        <div style={{ height: '100%' }}>
             <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
-            <input style={{ float: 'right', width: '30%', paddingBottom: '0', position: 'relative', bottom: '-1.7vh' }} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
+            <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
             <div style={styleBox}>
                 {pinnedChats ?
                     <>

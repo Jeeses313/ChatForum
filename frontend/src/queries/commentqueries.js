@@ -6,6 +6,7 @@ export const CREATE_COMMENT = gql`
             content
             date
             imageUrl
+            hasVideo
             user{
                 username
                 imageUrl
@@ -24,6 +25,7 @@ export const COMMENTS = gql`
                 imageUrl
             }
             imageUrl
+            hasVideo
             id
         }
     }
@@ -40,6 +42,7 @@ export const COMMENT_ADDED = gql`
                 date
                 content
                 imageUrl
+                hasVideo
                 id
             }
             chatTitle
@@ -67,10 +70,11 @@ export const COMMENT_DELETED = gql`
 `
 
 export const EDIT_COMMENT = gql`
-    mutation editComment($commentId: String!, $content: String!) {
+    mutation editComment($commentId: String!, $content: String!, $imageUrl: String) {
         editComment(
             commentId: $commentId
             content: $content
+            imageUrl: $imageUrl
         ){
             content
             id
@@ -84,6 +88,7 @@ export const COMMENT_EDITED = gql`
             content
             id
             imageUrl
+            hasVideo
         }
     }
 `

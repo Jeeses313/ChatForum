@@ -45,7 +45,7 @@ const Chat = ({ chat, isPinned, submitPin, submitUnpin }) => {
                 {latestComment}
             </div>
             <div>
-                {date}
+                {date}&nbsp;
                 {isPinned ?
                     <Button type='button' size='sm' onClick={() => submitUnpin(chat)}>Unpin</Button>
                     :

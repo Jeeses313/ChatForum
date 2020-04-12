@@ -18,6 +18,10 @@ const schema = new mongoose.Schema({
     imageUrl: {
         type: String,
         required: false
+    },
+    hasVideo: {
+        type: Boolean,
+        required: false
     }
 })
 
