@@ -25,7 +25,12 @@ const schema = new mongoose.Schema({
     profileChat: {
         type: Boolean,
         required: true
-    }
+    },
+    reports: [
+        { 
+            type: String 
+        }
+    ]
 })
 
 schema.set('toJSON', {

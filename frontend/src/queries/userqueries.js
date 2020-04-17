@@ -5,6 +5,7 @@ export const LOGIN = gql`
         login(username: $username, password: $password)  {
             value
             user {
+                id
                 username
                 pinnedChats {
                     title
@@ -20,6 +21,7 @@ export const SIGNIN = gql`
         createUser(username: $username, password: $password)  {
             value
             user {
+                id
                 username
                 pinnedChats {
                     title

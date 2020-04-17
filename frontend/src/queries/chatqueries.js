@@ -29,6 +29,45 @@ export const CHATS = gql`
             }
             id
             date
+            reports
+        }
+    }
+`
+
+export const REPORTED_CHATS = gql`
+    query {
+        reportedChats {
+            title
+            latestComment{
+                content
+                date
+                user{
+                    username
+                }
+            }
+            id
+            date
+            reports
+        }
+    }
+`
+
+export const CHAT = gql`
+    query chat($chatTitle: String!){
+        chat(chatTitle: $chatTitle) {
+            comments {
+                user { 
+                    username
+                    imageUrl
+                }
+                date
+                content
+                imageUrl
+                hasVideo
+                id
+            }
+            title
+            reports
         }
     }
 `
@@ -53,11 +92,40 @@ export const CHAT_ADDED = gql`
                 }
             }
             date
+            reports
         }
     }
 `
 
-export const CHAT_DELETED= gql`
+export const CHAT_REPORTED = gql`
+    subscription {
+        chatReported {
+            title
+            latestComment {
+                content
+                date
+                user {
+                    username
+                }
+            }
+            comments{
+                user { 
+                    username
+                    imageUrl
+                }
+                date
+                content
+                imageUrl
+                hasVideo
+                id
+            }
+            date
+            reports
+        }
+    }
+`
+
+export const CHAT_DELETED = gql`
     subscription {
         chatDeleted {
             title
@@ -77,6 +145,30 @@ export const PIN_CHAT = gql`
 export const UNPIN_CHAT = gql`
     mutation unpinChat($chatTitle: String!) {
         unpinChat(chatTitle: $chatTitle)  {
+            title
+        }
+    }
+`
+
+export const REPORT_CHAT = gql`
+    mutation reportChat($chatTitle: String!) {
+        reportChat(chatTitle: $chatTitle)  {
+            title
+        }
+    }
+`
+
+export const UNREPORT_CHAT = gql`
+    mutation unreportChat($chatTitle: String!) {
+        unreportChat(chatTitle: $chatTitle)  {
+            title
+        }
+    }
+`
+
+export const ZEROREPORT_CHAT = gql`
+    mutation zeroReportChat($chatTitle: String!) {
+        zeroReportChat(chatTitle: $chatTitle)  {
             title
         }
     }

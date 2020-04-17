@@ -9,7 +9,7 @@ import { setNotification } from '../reducers/notificationReducer'
 import { setMode } from '../reducers/modeReducer'
 
 const Navigationbar = () => {
-    const user = useSelector(state => state.user)
+    const currentUser = useSelector(state => state.user)
     const mode = useSelector(state => state.mode)
     const dispatch = useDispatch()
     const history = useHistory()
@@ -21,7 +21,7 @@ const Navigationbar = () => {
         dispatch(setNotification({ message: 'Logged out', error: false }, 5))
         history.push('/login')
     }
-    if (user) {
+    if (currentUser) {
         return (
             <>
                 <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -32,6 +32,13 @@ const Navigationbar = () => {
                             <Nav.Link href="#" as="span">
                                 <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
                             </Nav.Link>
+                            {currentUser.admin ?
+                                <Nav.Link href="#" as="span">
+                                    <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
+                                </Nav.Link>
+                                :
+                                <></>
+                            }
                             <Nav.Link href="#" as="span">
                                 {mode === 'light' ?
                                     <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
@@ -40,7 +47,7 @@ const Navigationbar = () => {
                                 }
                             </Nav.Link>
                             <Nav.Link href="#" as="span">
-                                <div><Link to={`/users/${user.username}`}>{user.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
+                                <div><Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
                             </Nav.Link>
                         </Nav>
                     </Navbar.Collapse>

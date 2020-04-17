@@ -28,6 +28,7 @@ const typeDefs = gql`
         date: Date!
         id: ID!
         profileChat: Boolean!
+        reports: [String!]!
     }
 
     type Comment {
@@ -53,7 +54,8 @@ const typeDefs = gql`
         me: User
         user(username: String!): User!
         chats: [Chat!]!
-        comments(chatTitle: String): [Comment!]!
+        reportedChats: [Chat!]!
+        chat(chatTitle: String!): Chat!
         pinnedChats: [Chat!]!
     }
 
@@ -95,12 +97,22 @@ const typeDefs = gql`
             imageUrl: String!
         ): User
         deleteUserProfilePic: User
+        reportChat(
+            chatTitle: String!
+        ): Chat
+        unreportChat(
+            chatTitle: String!
+        ): Chat
+        zeroReportChat(
+            chatTitle: String!
+        ): Chat
     }  
 
     type Subscription {
         commentAdded: CommentSub!
         chatAdded: Chat!
         chatDeleted: Chat!
+        chatReported: Chat!
         commentDeleted: Comment!
         commentEdited: Comment!
     }
@@ -133,17 +145,17 @@ const resolvers = {
         },
         user: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             const user = await User.findOne({ username: args.username })
             if (!user) {
                 throw new UserInputError('User does not exist')
             }
-            return { username: user.username, imageUrl: user.imageUrl }
+            return { id: user.id, username: user.username, imageUrl: user.imageUrl }
         },
         chats: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             return await Chat.find({ profileChat: false }).populate({
                 path: 'comments',
@@ -161,29 +173,46 @@ const resolvers = {
                 }
             })
         },
-        comments: async (root, args, { currentUser }) => {
-            if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+        reportedChats: async (root, args, { currentUser }) => {
+            if (!currentUser || !currentUser.admin) {
+                throw new AuthenticationError('Not authenticated')
             }
-            if (args.chatTitle) {
-                const chat = await Chat.findOne({ title: args.chatTitle }).populate({
-                    path: 'comments',
-                    model: 'Comment',
-                    populate: {
-                        path: 'user',
-                        model: 'User'
-                    }
-                })
-                if (!chat) {
-                    throw new UserInputError('Chat does not exist')
+            return await Chat.find({ reports: { $exists: true, $ne: [] } }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
                 }
-                return chat.comments
+            }).populate({
+                path: 'latestComment',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+        },
+        chat: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
             }
-            return await Comment.find({}).populate('user', { username: 1 })
+            const chat = await Chat.findOne({ title: args.chatTitle }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+            if (!chat) {
+                throw new UserInputError('Chat does not exist')
+            }
+            return chat
         },
         pinnedChats: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             return currentUser.pinnedChats
         }
@@ -203,7 +232,7 @@ const resolvers = {
                 }
                 const userChat = new Chat({ title: `userChat${res.username}`, comments: [], date: new Date, profileChat: true })
                 await userChat.save()
-                return { value: jwt.sign(userForToken, SECRET), user: { username: res.username, pinnedChats: [], admin: false } }
+                return { value: jwt.sign(userForToken, SECRET), user: { id: res.id, username: res.username, pinnedChats: [], admin: false } }
             })
                 .catch(error => {
                     throw new UserInputError('Username and password must be 3-15 characters long and username must be unique')
@@ -221,16 +250,16 @@ const resolvers = {
                 id: user._id,
             }
 
-            return { value: jwt.sign(userForToken, SECRET), user: { username: user.username, pinnedChats: user.pinnedChats, admin: user.admin } }
+            return { value: jwt.sign(userForToken, SECRET), user: { id: user.id, username: user.username, pinnedChats: user.pinnedChats, admin: user.admin } }
         },
         createChat: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             if (args.chatTitle.startsWith('userChat')) {
                 throw new UserInputError('Title cannot start with userChat')
             }
-            const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date, profileChat: false })
+            const chat = new Chat({ title: args.chatTitle, comments: [], date: new Date, profileChat: false, reports: [] })
             return chat.save().then(async res => {
                 pubsub.publish('CHAT_ADDED', { chatAdded: res })
                 return res
@@ -240,11 +269,14 @@ const resolvers = {
         },
         deleteChat: async (root, args, { currentUser }) => {
             if (!currentUser || !currentUser.admin) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             const chat = await Chat.findById(args.chatId).populate('comments')
             if (!chat) {
                 return
+            }
+            if (chat.profileChat) {
+                throw new UserInputError('Profile chats cannot be deleted')
             }
             return Chat.findByIdAndDelete(chat.id).then(async res => {
                 const commentIds = chat.comments.map(comment => comment.id)
@@ -255,7 +287,7 @@ const resolvers = {
         },
         createComment: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             const chat = await Chat.findOne({ title: args.chatTitle })
             if (!chat) {
@@ -303,7 +335,7 @@ const resolvers = {
                 return
             }
             if (!currentUser || (comment.user.username !== currentUser.username && !currentUser.admin)) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted', imageUrl: null }, { new: true }).then(async res => {
                 pubsub.publish('COMMENT_DELETED', { commentDeleted: res })
@@ -316,7 +348,7 @@ const resolvers = {
                 return
             }
             if (!currentUser || (comment.user.username !== currentUser.username)) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             if (args.content === '') {
                 throw new UserInputError('Content of comment must be at least 1 characters long')
@@ -362,11 +394,14 @@ const resolvers = {
         },
         pinChat: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             const chat = await Chat.findOne({ title: args.chatTitle })
             if (!chat) {
                 throw new UserInputError('Chat does not exist')
+            }
+            if (chat.profileChat) {
+                throw new UserInputError('Profile chats cannot be pinned')
             }
             if (currentUser.pinnedChats.map(pchat => pchat.title).includes(chat.title)) {
                 throw new UserInputError('Chat is already pinned')
@@ -376,7 +411,7 @@ const resolvers = {
         },
         unpinChat: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             const chat = await Chat.findOne({ title: args.chatTitle })
             if (!chat) {
@@ -390,7 +425,7 @@ const resolvers = {
         },
         setUserProfilePic: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             let res
             try {
@@ -407,10 +442,109 @@ const resolvers = {
         },
         deleteUserProfilePic: async (root, args, { currentUser }) => {
             if (!currentUser) {
-                throw new AuthenticationError("Not authenticated")
+                throw new AuthenticationError('Not authenticated')
             }
             return User.findOneAndUpdate({ username: currentUser.username }, { imageUrl: null }, { new: true }).then(res => {
                 return { username: res.username, pinnedChats: res.pinnedChats, imageUrl: res.imageUrl }
+            })
+        },
+        reportChat: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const chat = await Chat.findOne({ title: args.chatTitle }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            }).populate({
+                path: 'latestComment',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+            if (!chat) {
+                throw new UserInputError('Chat does not exist')
+            }
+            if (chat.reports.includes(currentUser.id)) {
+                throw new UserInputError('Chat already reported')
+            }
+            if (chat.profileChat) {
+                throw new UserInputError('Profile chats cannot be reported')
+            }
+            return await Chat.findOneAndUpdate({ title: args.chatTitle }, { reports: chat.reports.concat(currentUser.id) }, { new: true }).then(res => {
+                const reportedChat = chat
+                reportedChat.reports = chat.reports.concat(currentUser.id)
+                pubsub.publish('CHAT_REPORTED', { chatReported: reportedChat })
+                return reportedChat
+            })
+        },
+        unreportChat: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const chat = await Chat.findOne({ title: args.chatTitle }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            }).populate({
+                path: 'latestComment',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+            if (!chat) {
+                throw new UserInputError('Chat does not exist')
+            }
+            if (!chat.reports.includes(currentUser.id)) {
+                throw new UserInputError('Chat is not reported')
+            }
+            return await Chat.findOneAndUpdate({ title: args.chatTitle }, { reports: chat.reports.filter(id => id !== currentUser.id) }, { new: true }).then(res => {
+                const reportedChat = chat
+                reportedChat.reports = chat.reports.filter(id => id !== currentUser.id)
+                pubsub.publish('CHAT_REPORTED', { chatReported: reportedChat })
+                return reportedChat
+            })
+        },
+        zeroReportChat: async (root, args, { currentUser }) => {
+            if (!currentUser || !currentUser.admin) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const chat = await Chat.findOne({ title: args.chatTitle }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            }).populate({
+                path: 'latestComment',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+            if (!chat) {
+                throw new UserInputError('Chat does not exist')
+            }
+            if (chat.reports.length === 0) {
+                throw new UserInputError('Chat is not reported')
+            }
+            return await Chat.findOneAndUpdate({ title: args.chatTitle }, { reports: [] }, { new: true }).then(res => {
+                const reportedChat = chat
+                reportedChat.reports = []
+                pubsub.publish('CHAT_REPORTED', { chatReported: reportedChat })
+                return reportedChat
             })
         }
     },
@@ -424,6 +558,9 @@ const resolvers = {
         },
         chatDeleted: {
             subscribe: () => pubsub.asyncIterator(['CHAT_DELETED'])
+        },
+        chatReported: {
+            subscribe: () => pubsub.asyncIterator(['CHAT_REPORTED'])
         },
         commentDeleted: {
             subscribe: () => pubsub.asyncIterator(['COMMENT_DELETED'])

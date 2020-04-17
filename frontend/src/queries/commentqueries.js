@@ -15,22 +15,6 @@ export const CREATE_COMMENT = gql`
     }
 `
 
-export const COMMENTS = gql`
-    query comments($chatTitle: String){
-        comments(chatTitle: $chatTitle) {
-            content
-            date
-            user{
-                username
-                imageUrl
-            }
-            imageUrl
-            hasVideo
-            id
-        }
-    }
-`
-
 export const COMMENT_ADDED = gql`
     subscription {
         commentAdded {

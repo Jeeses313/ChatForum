@@ -1,5 +1,6 @@
 import React from 'react'
 import ChatsPage from './ChatsPage'
+import ReportedChatsPage from './ReportedChatsPage'
 import ChatPage from './ChatPage'
 import ProfilePage from './ProfilePage'
 import { Switch, Route, Redirect } from 'react-router-dom'
@@ -11,6 +12,9 @@ const LoggedInPage = () => {
             <Switch>
                 <Route path='/error/:errormessage'>
                     <ErrorPage></ErrorPage>
+                </Route>
+                <Route path='/reported/chats'>
+                    <ReportedChatsPage></ReportedChatsPage>
                 </Route>
                 <Route path='/chats/:title'>
                     <ChatPage></ChatPage>

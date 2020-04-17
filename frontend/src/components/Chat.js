@@ -1,37 +1,53 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useLazyQuery, useSubscription } from '@apollo/client'
-import { COMMENT_ADDED, COMMENTS, COMMENT_DELETED, COMMENT_EDITED } from '../queries/commentqueries'
+import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
+import { COMMENT_ADDED, COMMENT_DELETED, COMMENT_EDITED } from '../queries/commentqueries'
+import { CHAT, CHAT_REPORTED, REPORT_CHAT, UNREPORT_CHAT, PINNED_CHATS, PIN_CHAT, UNPIN_CHAT } from '../queries/chatqueries'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useHistory } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { Button } from 'react-bootstrap'
+import { setNotification } from '../reducers/notificationReducer'
 
 const Chat = ({ title }) => {
+    const [chat, setChat] = useState(null)
     const [comments, setComments] = useState([])
     const history = useHistory()
+    const dispatch = useDispatch()
     const mode = useSelector(state => state.mode)
+    const currentUser = useSelector(state => state.user)
     const [commentsToShow, setCommentsToShow] = useState([])
     const [filter, setFilter] = useState('')
-    const [loadComments, commentsResult] = useLazyQuery(COMMENTS)
+    const [loadChat, chatResult] = useLazyQuery(CHAT)
+    const [loadPinnedChats, pinnedChatsResult] = useLazyQuery(PINNED_CHATS)
+    const [pinnedChats, setPinnedChats] = useState()
     const commentsEndRef = useRef(null)
     const scrollToBottom = () => {
         commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
     useEffect(() => {
-        loadComments({ variables: { chatTitle: title } })
+        loadChat({ variables: { chatTitle: title } })
+        loadPinnedChats()
     }, []) //eslint-disable-line
     useEffect(() => {
-        loadComments({ variables: { chatTitle: title } })
+        loadChat({ variables: { chatTitle: title } })
+        loadPinnedChats()
     }, [title]) //eslint-disable-line
     useEffect(() => {
-        if (commentsResult.data) {
-            setComments(commentsResult.data.comments.sort((commentA, commentB) => {
+        if (chatResult.data) {
+            setComments(chatResult.data.chat.comments.sort((commentA, commentB) => {
                 return commentA.date - commentB.date
             }))
-        } else if (commentsResult.called && !commentsResult.loading) {
+            setChat(chatResult.data.chat)
+        } else if (chatResult.called && !chatResult.loading) {
             history.push('/error/Chat does not exist')
         }
-    }, [commentsResult]) //eslint-disable-line
+    }, [chatResult]) //eslint-disable-line
+    useEffect(() => {
+        if (pinnedChatsResult.data) {
+            setPinnedChats(pinnedChatsResult.data.pinnedChats.map(chat => chat.title))
+        }
+    }, [pinnedChatsResult.data]) //eslint-disable-line
     useEffect(scrollToBottom, [comments, commentsToShow])
     useSubscription(COMMENT_ADDED, {
         onSubscriptionData: ({ subscriptionData }) => {
@@ -65,6 +81,76 @@ const Chat = ({ title }) => {
             setCommentsToShow(comments.filter(comment => comment.content.toLowerCase().includes(filter.toLowerCase())))
         }
     }, [filter, comments])
+    const [reportChat, reportResult] = useMutation(REPORT_CHAT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitReport = () => {
+        if (window.confirm('Report chat?')) {
+            reportChat({ variables: { chatTitle: title } })
+        }
+    }
+    useEffect(() => {
+        if (reportResult.data) {
+            dispatch(setNotification({ message: 'Chat reported', error: false }, 10))
+        }
+    }, [reportResult.data]) // eslint-disable-line
+    const [unreportChat, unreportResult] = useMutation(UNREPORT_CHAT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitUnreport = () => {
+        if (window.confirm('Unreport chat?')) {
+            unreportChat({ variables: { chatTitle: title } })
+        }
+    }
+    useEffect(() => {
+        if (unreportResult.data) {
+            dispatch(setNotification({ message: 'Chat unreported', error: false }, 10))
+        }
+    }, [unreportResult.data]) // eslint-disable-line
+    useSubscription(CHAT_REPORTED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const reportedChat = subscriptionData.data.chatReported
+            if (reportedChat.title === title) {
+                setChat(reportedChat)
+            }
+        }
+    })
+    const [pinChat, pinResult] = useMutation(PIN_CHAT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const [unpinChat, unpinResult] = useMutation(UNPIN_CHAT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitPin = () => {
+        if (window.confirm('Pin chat?')) {
+            pinChat({ variables: { chatTitle: title } })
+        }
+    }
+    useEffect(() => {
+        if (pinResult.data) {
+            setPinnedChats(pinnedChats.concat(pinResult.data.pinChat.title))
+            dispatch(setNotification({ message: 'Chat pinned', error: false }, 10))
+        }
+    }, [pinResult.data]) // eslint-disable-line
+    const submitUnpin = () => {
+        if (window.confirm('Unpin chat?')) {
+            unpinChat({ variables: { chatTitle: title } })
+        }
+    }
+    useEffect(() => {
+        if (unpinResult.data) {
+            setPinnedChats(pinnedChats.filter(pchat => pchat !== unpinResult.data.unpinChat.title))
+            dispatch(setNotification({ message: 'Chat unpinned', error: false }, 10))
+        }
+    }, [unpinResult.data]) // eslint-disable-line
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',
@@ -83,6 +169,29 @@ const Chat = ({ title }) => {
     }
     return (
         <>
+            {title.startsWith('userChat') ?
+                <h2 style={{ display: 'inline-block', marginBottom: '0' }}>{`${title.substring(8)}'s chat`}</h2>
+                :
+                <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
+                    {title}&nbsp;
+                    {pinnedChats && pinnedChats.includes(title) ?
+                        <Button type='button' size='sm' onClick={submitUnpin}>Unpin</Button>
+                        :
+                        <Button type='button' size='sm' onClick={submitPin}>Pin</Button>
+                    }
+                    {currentUser.admin ?
+                        <></>
+                        :
+                        <>
+                            {chat && chat.reports && chat.reports.includes(currentUser.id) ?
+                                <Button type='button' size='sm' onClick={submitUnreport}>Unreport</Button>
+                                :
+                                <Button type='button' size='sm' onClick={submitReport}>Report</Button>
+                            }
+                        </>
+                    }
+                </h2>
+            }
             <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
             <br />
             <div style={styleBox}>

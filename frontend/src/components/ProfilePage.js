@@ -118,7 +118,6 @@ const ProfilePage = () => {
                     </div>
                     <div className="col-9">
                         <div>
-                            <h2 style={{ display: 'inline-block', marginBottom: '0' }}>{`${username}'s chat`}</h2>
                             <Chat title={`userChat${username}`}></Chat>
                         </div>
                     </div>

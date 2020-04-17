@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
-import { CHAT_ADDED, CHATS, PINNED_CHATS, CHAT_DELETED, UNPIN_CHAT, PIN_CHAT, CHAT_REPORTED } from '../queries/chatqueries'
+import { CHAT_ADDED, REPORTED_CHATS, PINNED_CHATS, CHAT_DELETED, UNPIN_CHAT, PIN_CHAT, CHAT_REPORTED } from '../queries/chatqueries'
 import { COMMENT_ADDED } from '../queries/commentqueries'
-import Chat from './ChatListing'
+import ChatListing from './ChatListing'
 import ChatForm from './ChatForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
+import { useHistory } from 'react-router-dom'
 
-const ChatsPage = () => {
+const ReportedChatsPage = () => {
     const dispatch = useDispatch()
     const mode = useSelector(state => state.mode)
+    const currentUser = useSelector(state => state.user)
+    const history = useHistory()
     const [chats, setChats] = useState([])
-    const [loadChats, chatsResult] = useLazyQuery(CHATS)
+    const [loadReportedChats, reportedChatsResult] = useLazyQuery(REPORTED_CHATS)
     const [loadPinnedChats, pinnedChatsResult] = useLazyQuery(PINNED_CHATS)
     const [chatsToShow, setChatsToShow] = useState([])
     const [filter, setFilter] = useState('')
@@ -37,15 +40,18 @@ const ChatsPage = () => {
         return dateB - dateA
     }, [pinnedChats])
     useEffect(() => {
-        loadChats()
+        if(!currentUser.admin) {
+            history.push('/error/Not authorized')
+        }
+        loadReportedChats()
         loadPinnedChats()
     }, []) //eslint-disable-line
     useEffect(() => {
-        if (chatsResult.data) {
-            setChats(chatsResult.data.chats.slice(0).sort(sortChats))
+        if (reportedChatsResult.data) {
+            setChats(reportedChatsResult.data.reportedChats.slice(0).sort(sortChats))
             setChatsToShow(chats)
         }
-    }, [chatsResult.data]) //eslint-disable-line
+    }, [reportedChatsResult.data]) //eslint-disable-line
     useEffect(() => {
         if (pinnedChatsResult.data) {
             setPinnedChats(pinnedChatsResult.data.pinnedChats.map(chat => chat.title))
@@ -73,7 +79,7 @@ const ChatsPage = () => {
             const reportedChat = subscriptionData.data.chatReported
             const newChats = chats.map(chat => chat.title === reportedChat.title ? { ...chat, reports: reportedChat.reports } : chat)
             newChats.sort(sortChats)
-            setChats(newChats)
+            setChats(newChats.filter(chat => chat.reports.length > 0))
         }
     })
     useEffect(() => {
@@ -138,13 +144,13 @@ const ChatsPage = () => {
     }
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
+            <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Reported chats</h2>
             <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
             <div style={styleBox}>
                 {pinnedChats ?
                     <>
                         {chatsToShow.map(chat =>
-                            <Chat key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></Chat>
+                            <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
                         )}
                     </>
                     :
@@ -157,4 +163,4 @@ const ChatsPage = () => {
     )
 }
 
-export default ChatsPage
+export default ReportedChatsPage
