@@ -92,6 +92,7 @@ export const CHAT_ADDED = gql`
                 }
             }
             date
+            id
             reports
         }
     }
@@ -101,6 +102,7 @@ export const CHAT_REPORTED = gql`
     subscription {
         chatReported {
             title
+            id
             latestComment {
                 content
                 date

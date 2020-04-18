@@ -71,10 +71,10 @@ const Chat = ({ chat, isPinned, submitPin, submitUnpin }) => {
         }
     }
     useEffect(() => {
-        if (zeroReportResult.data) {
+        if (zeroReportResult.loading && zeroReportResult.called) {
             dispatch(setNotification({ message: 'Chat\'s reports zeroed', error: false }, 10))
         }
-    }, [zeroReportResult.data]) // eslint-disable-line
+    }, [zeroReportResult]) // eslint-disable-line
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',

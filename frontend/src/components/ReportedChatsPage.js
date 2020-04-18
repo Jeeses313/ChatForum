@@ -3,7 +3,6 @@ import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
 import { CHAT_ADDED, REPORTED_CHATS, PINNED_CHATS, CHAT_DELETED, UNPIN_CHAT, PIN_CHAT, CHAT_REPORTED } from '../queries/chatqueries'
 import { COMMENT_ADDED } from '../queries/commentqueries'
 import ChatListing from './ChatListing'
-import ChatForm from './ChatForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { useHistory } from 'react-router-dom'
@@ -29,6 +28,9 @@ const ReportedChatsPage = () => {
         if (!pinnedChats.includes(chatA.title) && pinnedChats.includes(chatB.title)) {
             return 1
         }
+        if (chatA.reports.length !== chatB.reports.length) {
+            return chatB.reports.length - chatA.reports.length
+        }
         let dateA = chatA.date
         if (chatA.latestComment) {
             dateA = chatA.latestComment.date
@@ -40,7 +42,7 @@ const ReportedChatsPage = () => {
         return dateB - dateA
     }, [pinnedChats])
     useEffect(() => {
-        if(!currentUser.admin) {
+        if (!currentUser.admin) {
             history.push('/error/Not authorized')
         }
         loadReportedChats()
@@ -77,7 +79,12 @@ const ReportedChatsPage = () => {
     useSubscription(CHAT_REPORTED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const reportedChat = subscriptionData.data.chatReported
-            const newChats = chats.map(chat => chat.title === reportedChat.title ? { ...chat, reports: reportedChat.reports } : chat)
+            let newChats = []
+            if (chats.map(chat => chat.title).includes(reportedChat.title)) {
+                newChats = chats.map(chat => chat.title === reportedChat.title ? { ...chat, reports: reportedChat.reports } : chat)
+            } else {
+                newChats = chats.concat(reportedChat)
+            }
             newChats.sort(sortChats)
             setChats(newChats.filter(chat => chat.reports.length > 0))
         }
@@ -158,7 +165,6 @@ const ReportedChatsPage = () => {
                 }
 
             </div>
-            <ChatForm></ChatForm>
         </div>
     )
 }

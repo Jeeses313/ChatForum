@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
 import { CHAT_ADDED, CHATS, PINNED_CHATS, CHAT_DELETED, UNPIN_CHAT, PIN_CHAT, CHAT_REPORTED } from '../queries/chatqueries'
 import { COMMENT_ADDED } from '../queries/commentqueries'
-import Chat from './ChatListing'
+import ChatListing from './ChatListing'
 import ChatForm from './ChatForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
@@ -144,7 +144,7 @@ const ChatsPage = () => {
                 {pinnedChats ?
                     <>
                         {chatsToShow.map(chat =>
-                            <Chat key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></Chat>
+                            <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
                         )}
                     </>
                     :
