@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { Button, Image } from 'react-bootstrap'
-import { DELETE_COMMENT, EDIT_COMMENT } from '../queries/commentqueries'
+import { DELETE_COMMENT, EDIT_COMMENT, REPORT_COMMENT, UNREPORT_COMMENT, ZEROREPORT_COMMENT } from '../queries/commentqueries'
 import { Link } from 'react-router-dom'
 
 const Comment = ({ comment }) => {
@@ -13,6 +13,11 @@ const Comment = ({ comment }) => {
     const [content, setContent] = useState(comment.content)
     const [editing, setEditing] = useState(false)
     const [imageUrl, setImageUrl] = useState(comment.imageUrl)
+    useEffect(() => {
+        if (!comment.imageUrl) {
+            setImageUrl('')
+        }
+    }, []) // eslint-disable-line
     const [deleteComment, deleteResult] = useMutation(DELETE_COMMENT, { // eslint-disable-line
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -29,12 +34,12 @@ const Comment = ({ comment }) => {
         }
     }
     useEffect(() => {
-        if (deleteResult.data) {
+        if (deleteResult.called && deleteResult.loading) {
             dispatch(setNotification({ message: 'Comment deleted', error: false }, 10))
         }
-    }, [deleteResult.data]) // eslint-disable-line
+    }, [deleteResult]) // eslint-disable-line
     let image = <></>
-    if (comment.imageUrl) {
+    if (comment.imageUrl && comment.imageUrl !== '') {
         if (comment.hasVideo) {
             image = <><iframe width="420" height="315"
                 frameBorder='0'
@@ -75,6 +80,51 @@ const Comment = ({ comment }) => {
     useEffect(() => {
         setContent(comment.content)
     }, [comment])
+    const [reportComment, reportResult] = useMutation(REPORT_COMMENT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitReport = () => {
+        if (window.confirm('Report comment?')) {
+            reportComment({ variables: { commentId: comment.id } })
+        }
+    }
+    useEffect(() => {
+        if (reportResult.data) {
+            dispatch(setNotification({ message: 'Comment reported', error: false }, 10))
+        }
+    }, [reportResult.data]) // eslint-disable-line
+    const [unreportComment, unreportResult] = useMutation(UNREPORT_COMMENT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitUnreport = () => {
+        if (window.confirm('Unreport comment?')) {
+            unreportComment({ variables: { commentId: comment.id } })
+        }
+    }
+    useEffect(() => {
+        if (unreportResult.data) {
+            dispatch(setNotification({ message: 'Comment unreported', error: false }, 10))
+        }
+    }, [unreportResult.data]) // eslint-disable-line
+    const [zeroReportComment, zeroReportResult] = useMutation(ZEROREPORT_COMMENT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitZeroReport = () => {
+        if (window.confirm('Zero comment\'s reports?')) {
+            zeroReportComment({ variables: { commentId: comment.id } })
+        }
+    }
+    useEffect(() => {
+        if (zeroReportResult.called && zeroReportResult.loading) {
+            dispatch(setNotification({ message: 'Comment\'s reports zeroed', error: false }, 10))
+        }
+    }, [zeroReportResult]) // eslint-disable-line
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',
@@ -100,12 +150,39 @@ const Comment = ({ comment }) => {
         <div style={styleBox}>
             <div>
                 {profileImage} <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link> {date}
+                {currentUser.admin ?
+                    <> Reports: {comment.reports.length}</>
+                    :
+                    <></>
+                }
             </div>
             <textarea rows='2' value={content} readOnly={!editing} style={contentBoxStyle} onChange={({ target }) => setContent(target.value)} block='true' />
             {image}
             {editing ?
                 <>
                     <input type='text' style={urlStyle} placeholder="Image/video url..." value={imageUrl} onChange={({ target }) => setImageUrl(target.value)} block='true'></input><br />
+                </>
+                :
+                <></>
+            }
+            {(currentUser.username !== comment.user.username) && !currentUser.admin && (comment.content !== 'Comment deleted') ?
+                <>
+                    {comment.reports.includes(currentUser.id) ?
+                        <Button type='button' size='sm' onClick={submitUnreport}>Unreport</Button>
+                        :
+                        <Button type='button' size='sm' onClick={submitReport}>Report</Button>
+                    }
+                </>
+                :
+                <></>
+            }
+            {currentUser.admin ?
+                <>
+                    {comment.reports.length > 0 ?
+                        <Button type='button' size='sm' onClick={submitZeroReport}>Zero reports</Button>
+                        :
+                        <></>
+                    }
                 </>
                 :
                 <></>

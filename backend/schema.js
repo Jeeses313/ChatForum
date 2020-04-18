@@ -38,6 +38,7 @@ const typeDefs = gql`
         imageUrl: String
         hasVideo: Boolean
         id: ID!
+        reports: [String!]!
     }
 
     type CommentSub {
@@ -55,6 +56,7 @@ const typeDefs = gql`
         user(username: String!): User!
         chats: [Chat!]!
         reportedChats: [Chat!]!
+        reportedComments: [Comment!]!
         chat(chatTitle: String!): Chat!
         pinnedChats: [Chat!]!
     }
@@ -106,6 +108,15 @@ const typeDefs = gql`
         zeroReportChat(
             chatTitle: String!
         ): Chat
+        reportComment(
+            commentId: String!
+        ): Comment
+        unreportComment(
+            commentId: String!
+        ): Comment
+        zeroReportComment(
+            commentId: String!
+        ): Comment
     }  
 
     type Subscription {
@@ -115,6 +126,7 @@ const typeDefs = gql`
         chatReported: Chat!
         commentDeleted: Comment!
         commentEdited: Comment!
+        commentReported: Comment!
     }
 `
 
@@ -192,6 +204,12 @@ const resolvers = {
                     model: 'User'
                 }
             })
+        },
+        reportedComments: async (root, args, { currentUser }) => {
+            if (!currentUser || !currentUser.admin) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            return await Comment.find({ reports: { $exists: true, $ne: [] } }).populate('user', { username: 1 })
         },
         chat: async (root, args, { currentUser }) => {
             if (!currentUser) {
@@ -337,7 +355,7 @@ const resolvers = {
             if (!currentUser || (comment.user.username !== currentUser.username && !currentUser.admin)) {
                 throw new AuthenticationError('Not authenticated')
             }
-            return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted', imageUrl: null }, { new: true }).then(async res => {
+            return Comment.findByIdAndUpdate(comment.id, { content: 'Comment deleted', imageUrl: null, reports: [] }, { new: true }).then(async res => {
                 pubsub.publish('COMMENT_DELETED', { commentDeleted: res })
                 return res
             })
@@ -356,7 +374,7 @@ const resolvers = {
             if (comment.imageUrl !== args.imageUrl) {
                 let imageUrl = ''
                 let hasVideo = false
-                if (args.imageUrl !== '') {
+                if (args.imageUrl && args.imageUrl !== '') {
                     let res
                     try {
                         res = await axios.get(args.imageUrl)
@@ -546,6 +564,60 @@ const resolvers = {
                 pubsub.publish('CHAT_REPORTED', { chatReported: reportedChat })
                 return reportedChat
             })
+        },
+        reportComment: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const comment = await Comment.findById(args.commentId).populate('user', { username: 1 })
+            if (!comment) {
+                throw new UserInputError('Comment does not exist')
+            }
+            if (comment.reports.includes(currentUser.id)) {
+                throw new UserInputError('Comment already reported')
+            }
+            return await Comment.findByIdAndUpdate(args.commentId, { reports: comment.reports.concat(currentUser.id) }, { new: true }).then(res => {
+                const reportedComment = comment
+                reportedComment.reports = comment.reports.concat(currentUser.id)
+                pubsub.publish('COMMENT_REPORTED', { commentReported: reportedComment })
+                return reportedComment
+            })
+        },
+        unreportComment: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const comment = await Comment.findById(args.commentId).populate('user', { username: 1 })
+            if (!comment) {
+                throw new UserInputError('Comment does not exist')
+            }
+            if (!comment.reports.includes(currentUser.id)) {
+                throw new UserInputError('Comment is not reported')
+            }
+            return await Comment.findByIdAndUpdate(args.commentId, { reports: comment.reports.filter(id => id !== currentUser.id) }, { new: true }).then(res => {
+                const reportedComment = comment
+                reportedComment.reports = comment.reports.filter(id => id !== currentUser.id)
+                pubsub.publish('COMMENT_REPORTED', { commentReported: reportedComment })
+                return reportedComment
+            })
+        },
+        zeroReportComment: async (root, args, { currentUser }) => {
+            if (!currentUser || !currentUser.admin) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const comment = await Comment.findById(args.commentId).populate('user', { username: 1 })
+            if (!comment) {
+                throw new UserInputError('Comment does not exist')
+            }
+            if (comment.reports.length === 0) {
+                throw new UserInputError('Comment is not reported')
+            }
+            return await Comment.findByIdAndUpdate(args.commentId, { reports: [] }, { new: true }).then(res => {
+                const reportedComment = comment
+                reportedComment.reports = []
+                pubsub.publish('COMMENT_REPORTED', { commentReported: reportedComment })
+                return reportedComment
+            })
         }
     },
 
@@ -567,7 +639,10 @@ const resolvers = {
         },
         commentEdited: {
             subscribe: () => pubsub.asyncIterator(['COMMENT_EDITED'])
-        }
+        },
+        commentReported: {
+            subscribe: () => pubsub.asyncIterator(['COMMENT_REPORTED'])
+        },
     }
 
 }

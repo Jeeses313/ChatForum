@@ -33,9 +33,14 @@ const Navigationbar = () => {
                                 <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
                             </Nav.Link>
                             {currentUser.admin ?
-                                <Nav.Link href="#" as="span">
-                                    <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
-                                </Nav.Link>
+                                <>
+                                    <Nav.Link href="#" as="span">
+                                        <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
+                                    </Nav.Link>
+                                    <Nav.Link href="#" as="span">
+                                        <Button variant="outline-info" onClick={() => { history.push('/reported/comments') }}>Reported comments</Button>
+                                    </Nav.Link>
+                                </>
                                 :
                                 <></>
                             }

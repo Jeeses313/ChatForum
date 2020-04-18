@@ -22,7 +22,12 @@ const schema = new mongoose.Schema({
     hasVideo: {
         type: Boolean,
         required: false
-    }
+    },
+    reports: [
+        { 
+            type: String 
+        }
+    ]
 })
 
 schema.set('toJSON', {

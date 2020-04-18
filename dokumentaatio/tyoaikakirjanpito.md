@@ -12,6 +12,6 @@
 | 11.4 |    3   |  chattien sivun, yksittäisen chatin sivun ja profiilisivun ulkonäön parantaminen, profiilikuvan poistaminen, sivujen uudelleen ohjautumisen korjaus, käyttöohjeiden aloitus ja uusien toimintojen/korjausten miettiminen   |
 | 12.4 |    3   |  cannot GET virheen korjaus, ulkonäön parantaminen, youtube videoiden käyttäminen kommenteissa, dark/light mode, kuvan/videon osoitteen muokkaus kommenttia editoidessa   |
 | 17.4 |    4   | chattien reporttaus ja unreporttaus chattien ja yksittäisen chatin sivulta, chattien pinnaus yksittäisen chatin sivulta, adminille mahdollisuus nähdä chattien reporttien määrä, listata kaikki reportatut chatit ja poistaa chatin reportit   |
-| 18.4 |    1   | reporttien nollauksen ilmoituksen korjaus, cahttien listaamiseen liittyvän virheilmoituksen korjaus    |
+| 18.4 |    3   | reporttien nollauksen ilmoituksen korjaus, chattien listaamiseen liittyvän virheilmoituksen korjaus, kommenttien reporttaus ja unreporttaus, adminille mahdollisuus nähdä kommenttien reporttien määrä, listata kakki reportatut kommentit ja poistaa kommentin reportit    |
 | yht |    38,5   |     |
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLazyQuery, useSubscription, useMutation } from '@apollo/client'
-import { COMMENT_ADDED, COMMENT_DELETED, COMMENT_EDITED } from '../queries/commentqueries'
-import { CHAT, CHAT_REPORTED, REPORT_CHAT, UNREPORT_CHAT, PINNED_CHATS, PIN_CHAT, UNPIN_CHAT } from '../queries/chatqueries'
+import { COMMENT_ADDED, COMMENT_DELETED, COMMENT_EDITED, COMMENT_REPORTED } from '../queries/commentqueries'
+import { CHAT, CHAT_REPORTED, REPORT_CHAT, UNREPORT_CHAT, ZEROREPORT_CHAT, PINNED_CHATS, PIN_CHAT, UNPIN_CHAT } from '../queries/chatqueries'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useHistory } from 'react-router-dom'
@@ -65,7 +65,7 @@ const Chat = ({ title }) => {
     useSubscription(COMMENT_DELETED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const deletedComment = subscriptionData.data.commentDeleted
-            setComments(comments.map(comment => comment.id === deletedComment.id ? { ...comment, content: deletedComment.content, imageUrl: deletedComment.imageUrl } : comment))
+            setComments(comments.map(comment => comment.id === deletedComment.id ? { ...comment, content: deletedComment.content, imageUrl: deletedComment.imageUrl, reports: deletedComment.reports } : comment))
         }
     })
     useSubscription(COMMENT_EDITED, {
@@ -111,6 +111,21 @@ const Chat = ({ title }) => {
             dispatch(setNotification({ message: 'Chat unreported', error: false }, 10))
         }
     }, [unreportResult.data]) // eslint-disable-line
+    const [zeroReportChat, zeroReportResult] = useMutation(ZEROREPORT_CHAT, { // eslint-disable-line
+        onError: (error) => {
+            dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
+        }
+    })
+    const submitZeroReport = () => {
+        if (window.confirm('Zero chat\'s reports?')) {
+            zeroReportChat({ variables: { chatTitle: title } })
+        }
+    }
+    useEffect(() => {
+        if (zeroReportResult.data) {
+            dispatch(setNotification({ message: 'Chat\'s reports zeroed', error: false }, 10))
+        }
+    }, [zeroReportResult.data]) // eslint-disable-line
     useSubscription(CHAT_REPORTED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const reportedChat = subscriptionData.data.chatReported
@@ -151,6 +166,13 @@ const Chat = ({ title }) => {
             dispatch(setNotification({ message: 'Chat unpinned', error: false }, 10))
         }
     }, [unpinResult.data]) // eslint-disable-line
+    useSubscription(COMMENT_REPORTED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const reportedComment = subscriptionData.data.commentReported
+            const newComments = comments.map(comment => comment.id === reportedComment.id ? { ...comment, reports: reportedComment.reports } : comment)
+            setComments(newComments)
+        }
+    })
     const styleBox = {
         borderStyle: 'solid',
         borderRadius: '5px',
@@ -180,7 +202,15 @@ const Chat = ({ title }) => {
                         <Button type='button' size='sm' onClick={submitPin}>Pin</Button>
                     }
                     {currentUser.admin ?
-                        <></>
+                        <>
+                            {chat && chat.reports.length > 0 ?
+                                <>
+                                    <Button type='button' size='sm' onClick={submitZeroReport}>Zero reports</Button> <span style={{ fontSize: '1rem' }}> Reports: {chat.reports.length}</span>
+                                </>
+                                :
+                                <></>
+                            }
+                        </>
                         :
                         <>
                             {chat && chat.reports && chat.reports.includes(currentUser.id) ?

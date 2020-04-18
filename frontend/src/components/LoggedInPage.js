@@ -1,6 +1,7 @@
 import React from 'react'
 import ChatsPage from './ChatsPage'
 import ReportedChatsPage from './ReportedChatsPage'
+import ReportedCommentsPage from './ReportedCommentsPage'
 import ChatPage from './ChatPage'
 import ProfilePage from './ProfilePage'
 import { Switch, Route, Redirect } from 'react-router-dom'
@@ -15,6 +16,9 @@ const LoggedInPage = () => {
                 </Route>
                 <Route path='/reported/chats'>
                     <ReportedChatsPage></ReportedChatsPage>
+                </Route>
+                <Route path='/reported/comments'>
+                    <ReportedCommentsPage></ReportedCommentsPage>
                 </Route>
                 <Route path='/chats/:title'>
                     <ChatPage></ChatPage>

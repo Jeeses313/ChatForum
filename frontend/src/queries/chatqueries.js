@@ -64,6 +64,7 @@ export const CHAT = gql`
                 content
                 imageUrl
                 hasVideo
+                reports
                 id
             }
             title
@@ -119,6 +120,7 @@ export const CHAT_REPORTED = gql`
                 content
                 imageUrl
                 hasVideo
+                reports
                 id
             }
             date
