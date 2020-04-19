@@ -54,7 +54,7 @@ const LoginForm = () => {
                     <Form.Control type="text" id='username' style={style} value={username} name="username" onChange={({ target }) => setUsername(target.value)} required />
                     <Form.Label>password:</Form.Label>
                     <Form.Control type="password" id='password' style={style} value={password} name="password" onChange={({ target }) => setPassword(target.value)} required />
-                    <Button id='submit' type="submit">login</Button> or <Link to='/signin'>sign in</Link>
+                    <Button id='submit' type="submit">Login</Button> or <Link to='/signin'>Sign in</Link>
                 </Form>
             </div>
         </>

@@ -52,7 +52,7 @@ const Navigationbar = () => {
                                 }
                             </Nav.Link>
                             <Nav.Link href="#" as="span">
-                                <div><Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>logout</Button></div>
+                                <div><Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>Logout</Button></div>
                             </Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
