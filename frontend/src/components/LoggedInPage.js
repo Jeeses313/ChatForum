@@ -6,10 +6,11 @@ import ChatPage from './ChatPage'
 import ProfilePage from './ProfilePage'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import ErrorPage from './ErrorPage'
+import { Container } from 'react-bootstrap'
 
 const LoggedInPage = () => {
     return (
-        <div className='container' style={{ height: '100%' }}>
+        <Container style={{ height: '100%' }}>
             <Switch>
                 <Route path='/error/:errormessage'>
                     <ErrorPage></ErrorPage>
@@ -33,7 +34,7 @@ const LoggedInPage = () => {
                     <Redirect to='/chats'></Redirect>
                 </Route>
             </Switch>
-        </div>
+        </Container>
     )
 }
 

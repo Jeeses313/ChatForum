@@ -33,19 +33,17 @@ const CommentForm = ({ title }) => {
         urlStyle.backgroundColor = 'darkgray'
     }
     return (
-        <div>
-            <Form onSubmit={submit}>
-                <Row size='lg'>
-                    <Col md='10' style={{ paddingRight: '0' }}>
-                        <Form.Control as='textarea' rows='2' style={contentStyle} id='content' value={content} name='content' onChange={({ target }) => setContent(target.value)} placeholder='New comment...' required block='true' />
-                        <Form.Control style={urlStyle} size="sm" type="text" placeholder="Image/video url..." value={imageUrl} name='imageUrl' id='imageUrl' onChange={({ target }) => setImageUrl(target.value)} block='true'></Form.Control>
-                    </Col>
-                    <Col md='2' style={{ paddingLeft: '0' }}>
-                        <Button style={{ height: '100%' }} id='submit' type='submit' size='lg' block>Send</Button>
-                    </Col>
-                </Row>
-            </Form>
-        </div>
+        <Form onSubmit={submit}>
+            <Row size='lg'>
+                <Col md='10' style={{ paddingRight: '0', paddingLeft: '0' }}>
+                    <Form.Control as='textarea' rows='2' style={contentStyle} id='content' value={content} name='content' onChange={({ target }) => setContent(target.value)} placeholder='New comment...' required block='true' />
+                    <Form.Control style={urlStyle} size="sm" type="text" placeholder="Image/video url..." value={imageUrl} name='imageUrl' id='imageUrl' onChange={({ target }) => setImageUrl(target.value)} block='true'></Form.Control>
+                </Col>
+                <Col md='2' style={{ paddingLeft: '0', paddingRight: '0' }}>
+                    <Button style={{ height: '100%' }} id='submit' type='submit' size='lg' block>Send</Button>
+                </Col>
+            </Row>
+        </Form>
     )
 }
 

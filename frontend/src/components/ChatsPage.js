@@ -6,6 +6,7 @@ import ChatListing from './ChatListing'
 import ChatForm from './ChatForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
+import { Row, Col } from 'react-bootstrap'
 
 const ChatsPage = () => {
     const dispatch = useDispatch()
@@ -130,30 +131,40 @@ const ChatsPage = () => {
         overflowY: 'scroll',
         height: '77.5vh'
     }
-    const filterStyle = { float: 'right', width: '30%', paddingBottom: '0', borderColor: 'grey' }
+    const filterStyle = { width: '100%', paddingBottom: '0', borderColor: 'grey' }
     if (mode === 'light') {
         filterStyle.backgroundColor = 'white'
     } else {
         filterStyle.backgroundColor = 'darkgray'
     }
+    const colStyle = { paddingRight: '0', paddingLeft: '0' }
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
-            <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
-            <div style={styleBox}>
-                {pinnedChats ?
-                    <>
-                        {chatsToShow.map(chat =>
-                            <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
-                        )}
-                    </>
-                    :
-                    <div>Loading</div>
-                }
-
-            </div>
+            <Row>
+                <Col md="8" style={colStyle}>
+                    <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
+                </Col>
+                <Col md="4" style={colStyle}>
+                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
+                </Col>
+            </Row>
+            <Row>
+                <Col style={colStyle}>
+                    <div style={styleBox}>
+                        {pinnedChats ?
+                            <>
+                                {chatsToShow.map(chat =>
+                                    <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
+                                )}
+                            </>
+                            :
+                            <div>Loading</div>
+                        }
+                    </div>
+                </Col>
+            </Row>
             <ChatForm></ChatForm>
-        </div>
+        </div >
     )
 }
 

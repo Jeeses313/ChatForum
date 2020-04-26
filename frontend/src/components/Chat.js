@@ -6,7 +6,7 @@ import Comment from './Comment'
 import CommentForm from './CommentForm'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button } from 'react-bootstrap'
+import { Button, Row, Col } from 'react-bootstrap'
 import { setNotification } from '../reducers/notificationReducer'
 
 const Chat = ({ title }) => {
@@ -181,59 +181,69 @@ const Chat = ({ title }) => {
         marginBottom: '0',
         overflowY: 'scroll',
         height: '70vh',
-        width: '100%'
+        width: '100%',
     }
-    const filterStyle = { float: 'right', width: '30%', paddingBottom: '0', borderColor: 'grey' }
+    const filterStyle = { width: '100%', paddingBottom: '0', borderColor: 'grey', paddingRight: '0', paddingLeft: '0' }
     if (mode === 'light') {
         filterStyle.backgroundColor = 'white'
     } else {
         filterStyle.backgroundColor = 'darkgray'
     }
+    const colStyle = { paddingRight: '0', paddingLeft: '0' }
     return (
         <>
-            {title.startsWith('userChat') ?
-                <h2 style={{ display: 'inline-block', marginBottom: '0' }}>{`${title.substring(8)}'s chat`}</h2>
-                :
-                <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
-                    {title}&nbsp;
-                    {pinnedChats && pinnedChats.includes(title) ?
-                        <Button type='button' size='sm' onClick={submitUnpin}>Unpin</Button>
+            <Row>
+                <Col md="8" style={colStyle}>
+                    {title.startsWith('userChat') ?
+                        <h2 style={{ display: 'inline-block', marginBottom: '0' }}>{`${title.substring(8)}'s chat`}</h2>
                         :
-                        <Button type='button' size='sm' onClick={submitPin}>Pin</Button>
-                    }
-                    {currentUser.admin ?
-                        <>
-                            {chat && chat.reports.length > 0 ?
+                        <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
+                            {title}&nbsp;
+                            {pinnedChats && pinnedChats.includes(title) ?
+                                <Button type='button' size='sm' onClick={submitUnpin}>Unpin</Button>
+                                :
+                                <Button type='button' size='sm' onClick={submitPin}>Pin</Button>
+                            }
+                            {currentUser.admin ?
                                 <>
-                                    <Button type='button' size='sm' onClick={submitZeroReport}>Zero reports</Button> <span style={{ fontSize: '1rem' }}> Reports: {chat.reports.length}</span>
+                                    {chat && chat.reports.length > 0 ?
+                                        <>
+                                            <Button type='button' size='sm' onClick={submitZeroReport}>Zero reports</Button> <span style={{ fontSize: '1rem' }}> Reports: {chat.reports.length}</span>
+                                        </>
+                                        :
+                                        <></>
+                                    }
                                 </>
                                 :
-                                <></>
+                                <>
+                                    {chat && chat.reports && chat.reports.includes(currentUser.id) ?
+                                        <Button type='button' size='sm' onClick={submitUnreport}>Unreport</Button>
+                                        :
+                                        <Button type='button' size='sm' onClick={submitReport}>Report</Button>
+                                    }
+                                </>
                             }
-                        </>
-                        :
-                        <>
-                            {chat && chat.reports && chat.reports.includes(currentUser.id) ?
-                                <Button type='button' size='sm' onClick={submitUnreport}>Unreport</Button>
-                                :
-                                <Button type='button' size='sm' onClick={submitReport}>Report</Button>
-                            }
-                        </>
+                        </h2>
                     }
-                </h2>
-            }
-            <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
-            <br />
-            <div style={styleBox}>
-                {comments.length === 0 ?
-                    <div>No comments yet</div>
-                    :
-                    commentsToShow.map(comment =>
-                        <Comment key={comment.id} comment={comment}></Comment>
-                    )
-                }
-                <div ref={commentsEndRef} />
-            </div>
+                </Col>
+                <Col md="4" style={colStyle}>
+                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
+                </Col>
+            </Row>
+            <Row >
+                <Col style={colStyle}>
+                    <div style={styleBox}>
+                        {comments.length === 0 ?
+                            <div>No comments yet</div>
+                            :
+                            commentsToShow.map(comment =>
+                                <Comment key={comment.id} comment={comment}></Comment>
+                            )
+                        }
+                        <div ref={commentsEndRef} />
+                    </div>
+                </Col>
+            </Row>
             <CommentForm title={title}></CommentForm>
         </>
     )

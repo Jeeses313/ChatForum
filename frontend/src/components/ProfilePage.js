@@ -9,6 +9,7 @@ import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMutation } from '@apollo/client'
 import Chat from './Chat'
+import { Row, Col } from 'react-bootstrap'
 
 const ProfilePage = () => {
     const dispatch = useDispatch()
@@ -81,23 +82,23 @@ const ProfilePage = () => {
     return (
         <>
             {user ?
-                <div className="row">
-                    <div className="col-3">
-                        <div className="row" >
+                <Row>
+                    <Col md="3">
+                        <Row >
                             <div>{image}</div>
-                        </div>
-                        <div className="row">
+                        </Row>
+                        <Row>
                             <h2>{user.username}</h2>
-                        </div>
-                        <div className="row" >
+                        </Row>
+                        <Row >
                             {user.username === currentUser.username ?
                                 <>
                                     {editImageUrl ?
                                         <>
-                                            <div className="row">
+                                            <Row>
                                                 <input type='text' placeholder='Url of the image...' value={imageUrl} onChange={({ target }) => setImageUrl(target.value)}></input>
-                                            </div>
-                                            <div className="row">
+                                            </Row>
+                                            <Row>
                                                 <Button type='button' size='sm' onClick={stopEditing}>Back</Button>
                                                 {user.imageUrl ?
                                                     <Button type='button' size='sm' onClick={submitDeleteImage}>Delete image</Button>
@@ -105,7 +106,7 @@ const ProfilePage = () => {
                                                     <></>
                                                 }
                                                 <Button type='button' size='sm' onClick={submitSetImage}>Submit image</Button>
-                                            </div>
+                                            </Row>
                                         </>
                                         :
                                         <Button type='button' size='sm' onClick={() => setEditImageUrl(true)}>Set image</Button>
@@ -114,14 +115,14 @@ const ProfilePage = () => {
                                 :
                                 <></>
                             }
-                        </div>
-                    </div>
-                    <div className="col-9">
+                        </Row>
+                    </Col>
+                    <Col md="9">
                         <div>
                             <Chat title={`userChat${username}`}></Chat>
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
                 :
                 <></>
             }
