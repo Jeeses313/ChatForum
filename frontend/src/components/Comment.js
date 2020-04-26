@@ -5,6 +5,7 @@ import { setNotification } from '../reducers/notificationReducer'
 import { Button, Image } from 'react-bootstrap'
 import { DELETE_COMMENT, EDIT_COMMENT, REPORT_COMMENT, UNREPORT_COMMENT, ZEROREPORT_COMMENT } from '../queries/commentqueries'
 import { Link } from 'react-router-dom'
+import CommentMedia from './CommentMedia'
 
 const Comment = ({ comment }) => {
     const dispatch = useDispatch()
@@ -38,19 +39,6 @@ const Comment = ({ comment }) => {
             dispatch(setNotification({ message: 'Comment deleted', error: false }, 10))
         }
     }, [deleteResult]) // eslint-disable-line
-    let image = <></>
-    if (comment.imageUrl && comment.imageUrl !== '') {
-        if (comment.hasVideo) {
-            image = <><iframe width="420" height="315"
-                frameBorder='0'
-                allowFullScreen
-                title='video'
-                src={comment.imageUrl}>
-            </iframe><br /></>
-        } else {
-            image = <><Image src={comment.imageUrl} fluid></Image><br /></>
-        }
-    }
     let profileImage = <></>
     if (comment.user.imageUrl) {
         profileImage = <><Image style={{ height: '10%', width: '10%' }} src={comment.user.imageUrl} fluid></Image></>
@@ -157,7 +145,7 @@ const Comment = ({ comment }) => {
                 }
             </div>
             <textarea rows='2' value={content} readOnly={!editing} style={contentBoxStyle} onChange={({ target }) => setContent(target.value)} block='true' />
-            {image}
+            <CommentMedia imageUrl={comment.imageUrl} hasVideo={comment.hasVideo}></CommentMedia>
             {editing ?
                 <>
                     <input type='text' style={urlStyle} placeholder="Image/video url..." value={imageUrl} onChange={({ target }) => setImageUrl(target.value)} block='true'></input><br />

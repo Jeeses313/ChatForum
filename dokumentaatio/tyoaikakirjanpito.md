@@ -14,6 +14,6 @@
 | 17.4 |    4   | chattien reporttaus ja unreporttaus chattien ja yksittäisen chatin sivulta, chattien pinnaus yksittäisen chatin sivulta, adminille mahdollisuus nähdä chattien reporttien määrä, listata kaikki reportatut chatit ja poistaa chatin reportit   |
 | 18.4 |    3   | reporttien nollauksen ilmoituksen korjaus, chattien listaamiseen liittyvän virheilmoituksen korjaus, kommenttien reporttaus ja unreporttaus, adminille mahdollisuus nähdä kommenttien reporttien määrä, listata kakki reportatut kommentit ja poistaa kommentin reportit    |
 | 19.4 |    0,5   |  käyttöohjeiden kirjoittaminen ja pieni ulkonäön parannuksia   |
-| 26.4 |    1   |  react-bootsrapin Row, Col ja Containerin käyttöön otto ja layoutin parantaminen    |
-| yht |    43   |     |
+| 26.4 |    3   |  react-bootsrapin Row, Col ja Containerin käyttöönotto ja layoutin parantaminen, modal imagejen käyttö ja niihin liittyvien ongelmien ratakaiseminen     |
+| yht |    45   |     |
 
