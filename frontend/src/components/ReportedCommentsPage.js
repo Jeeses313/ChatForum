@@ -15,6 +15,7 @@ const ReportedCommentsPage = () => {
     const [filter, setFilter] = useState('')
     const [loadComments, commentsResult] = useLazyQuery(REPORTED_COMMENTS)
     const commentsEndRef = useRef(null)
+    const [toScroll, setToScroll] = useState(true)
     const sortComments = (commentA, commentB) => {
         if (commentA.reports.length !== commentB.reports.length) {
             return commentB.reports.length - commentA.reports.length
@@ -32,10 +33,22 @@ const ReportedCommentsPage = () => {
     }, []) //eslint-disable-line
     useEffect(() => {
         if (commentsResult.data) {
+            setToScroll(true)
             setComments(commentsResult.data.reportedComments.sort(sortComments))
+            setTimeout(() => {
+                scrollToBottom()
+            }, 200)
+            setTimeout(() => {
+                scrollToBottom()
+            }, 300)
         }
     }, [commentsResult]) //eslint-disable-line
-    useEffect(scrollToBottom, [comments, commentsToShow])
+    useEffect(() => {
+        if (toScroll) {
+            scrollToBottom()
+            setToScroll(false)
+        }
+    }, [commentsToShow]) //eslint-disable-line
     useSubscription(COMMENT_DELETED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const deletedComment = subscriptionData.data.commentDeleted
@@ -92,7 +105,10 @@ const ReportedCommentsPage = () => {
                     <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Reported comments</h2>
                 </Col>
                 <Col md="4" style={colStyle}>
-                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
+                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => {
+                        setToScroll(true)
+                        setFilter(target.value)
+                    }} placeholder='Filter comments by content...'></input>
                 </Col>
             </Row>
             <Row >

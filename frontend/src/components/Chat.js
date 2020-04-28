@@ -22,6 +22,7 @@ const Chat = ({ title }) => {
     const [loadPinnedChats, pinnedChatsResult] = useLazyQuery(PINNED_CHATS)
     const [pinnedChats, setPinnedChats] = useState()
     const commentsEndRef = useRef(null)
+    const [toScroll, setToScroll] = useState(true)
     const scrollToBottom = () => {
         commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
@@ -35,10 +36,17 @@ const Chat = ({ title }) => {
     }, [title]) //eslint-disable-line
     useEffect(() => {
         if (chatResult.data) {
+            setToScroll(true)
             setComments(chatResult.data.chat.comments.sort((commentA, commentB) => {
                 return commentA.date - commentB.date
             }))
             setChat(chatResult.data.chat)
+            setTimeout(() => {
+                scrollToBottom()
+            }, 200)
+            setTimeout(() => {
+                scrollToBottom()
+            }, 300)
         } else if (chatResult.called && !chatResult.loading) {
             history.push('/error/Chat does not exist')
         }
@@ -48,12 +56,18 @@ const Chat = ({ title }) => {
             setPinnedChats(pinnedChatsResult.data.pinnedChats.map(chat => chat.title))
         }
     }, [pinnedChatsResult.data]) //eslint-disable-line
-    useEffect(scrollToBottom, [comments, commentsToShow])
+    useEffect(() => {
+        if (toScroll) {
+            scrollToBottom()
+            setToScroll(false)
+        }
+    }, [commentsToShow]) //eslint-disable-line
     useSubscription(COMMENT_ADDED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const newComment = subscriptionData.data.commentAdded.comment
             const chatTitle = subscriptionData.data.commentAdded.chatTitle
             if (chatTitle === title) {
+                setToScroll(true)
                 const newComments = comments.concat(newComment)
                 newComments.sort((commentA, commentB) => {
                     return commentA.date - commentB.date
@@ -227,7 +241,10 @@ const Chat = ({ title }) => {
                     }
                 </Col>
                 <Col md="4" style={colStyle}>
-                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter comments by content...'></input>
+                    <input style={filterStyle} type='text' value={filter} onChange={({ target }) => {
+                        setToScroll(true)
+                        setFilter(target.value)
+                    }} placeholder='Filter comments by content...'></input>
                 </Col>
             </Row>
             <Row >

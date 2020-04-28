@@ -15,5 +15,6 @@
 | 18.4 |    3   | reporttien nollauksen ilmoituksen korjaus, chattien listaamiseen liittyvän virheilmoituksen korjaus, kommenttien reporttaus ja unreporttaus, adminille mahdollisuus nähdä kommenttien reporttien määrä, listata kakki reportatut kommentit ja poistaa kommentin reportit    |
 | 19.4 |    0,5   |  käyttöohjeiden kirjoittaminen ja pieni ulkonäön parannuksia   |
 | 26.4 |    3   |  react-bootsrapin Row, Col ja Containerin käyttöönotto ja layoutin parantaminen, modal imagejen käyttö ja niihin liittyvien ongelmien ratakaiseminen     |
-| yht |    45   |     |
+| 28.4 |    1,5   |  kommenttien kuvien aiheuttaman scrollausvirheen korjaaminen chateissa ja kommenttien poistamisen, reporttauksen ja editoinnin aiheuttaman scrollauksen poistaminen  |
+| yht |    46,5   |     |
 

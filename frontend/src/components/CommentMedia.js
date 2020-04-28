@@ -31,7 +31,7 @@ const CommentMedia = ({ imageUrl, hasVideo }) => {
                     <OverlayTrigger placement="top" delay={{ show: 250, hide: 400 }} overlay={
                         <Tooltip>Click to expand</Tooltip>
                     }>
-                        <Image src={imageUrl} onClick={handleShow} style={{maxWidth: '30%', maxHeight: '30%'}}></Image>
+                        <Image src={imageUrl} onClick={handleShow} style={{ maxWidth: '30%', maxHeight: '30%' }}></Image>
                     </OverlayTrigger>
                     <Modal show={show} size="lg" onHide={handleClose} >
                         <Modal.Header closeButton></Modal.Header>
