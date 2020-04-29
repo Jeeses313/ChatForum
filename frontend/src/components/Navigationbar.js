@@ -22,50 +22,80 @@ const Navigationbar = () => {
         history.push('/login')
     }
     if (currentUser) {
-        return (
-            <>
-                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-                    <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                    <Navbar.Collapse id="responsive-navbar-nav">
+        if (currentUser.admin) {
+            return (
+                <>
+                    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                        <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
                         <Nav className="mr-auto">
-                            <Nav.Link href="#" as="span">
-                                <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
-                            </Nav.Link>
-                            {currentUser.admin ?
-                                <>
-                                    <Nav.Link href="#" as="span">
-                                        <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
-                                    </Nav.Link>
-                                    <Nav.Link href="#" as="span">
-                                        <Button variant="outline-info" onClick={() => { history.push('/reported/comments') }}>Reported comments</Button>
-                                    </Nav.Link>
-                                </>
-                                :
-                                <></>
-                            }
-                            <Nav.Link href="#" as="span">
+                            <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
                                 {mode === 'light' ?
                                     <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
                                     :
                                     <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
                                 }
                             </Nav.Link>
+                        </Nav>
+                        <Navbar.Collapse id="responsive-navbar-nav">
+                            <Nav className="mr-auto">
+                                <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
+                                    <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/pinnedchats') }}>Pinned Chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/reported/comments') }}>Reported comments</Button>
+                                </Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                        <Nav className="mr-auto">
                             <Nav.Link href="#" as="span">
-                                <div><Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>Logout</Button></div>
+                                <Navbar.Text style={{ padding: '0' }} >
+                                    <Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>Logout</Button><Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                                </Navbar.Text>
                             </Nav.Link>
                         </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
-                <Notification></Notification>
-            </>
-        )
+                    </Navbar>
+                    <Notification></Notification>
+                </>
+            )
+        } else {
+            return (
+                <>
+                    <Navbar collapseOnSelect expand="md" bg="dark" variant="dark">
+                        <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
+                        <Nav className="mr-auto">
+                            <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
+                                {mode === 'light' ?
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    :
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                }
+                            </Nav.Link>
+                        </Nav>
+                        <Navbar.Collapse id="responsive-navbar-nav">
+                            <Nav className="mr-auto">
+                                <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
+                                    <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/pinnedchats') }}>Pinned Chats</Button>
+                                </Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                        <Nav className="mr-auto">
+                            <Nav.Link href="#" as="span">
+                                <Navbar.Text style={{ padding: '0' }} >
+                                    <Link to={`/users/${currentUser.username}`}>{currentUser.username}</Link> logged in <Button variant="outline-info" onClick={handleLogout}>Logout</Button><Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                                </Navbar.Text>
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar>
+                    <Notification></Notification>
+                </>
+            )
+        }
     } else {
         return (
             <>
-                <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                <Navbar collapseOnSelect bg="dark" variant="dark">
                     <Navbar.Brand href="" as="span">ChatForum</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="mr-auto">
                             <Nav.Link href="#" as="span">

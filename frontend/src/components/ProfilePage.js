@@ -48,7 +48,6 @@ const ProfilePage = () => {
             setUser({ ...user, imageUrl: profilePicResult.data.setUserProfilePic.imageUrl })
             setImageUrl('')
             setEditImageUrl(false)
-            setImage(<><Image style={{ height: '10%', width: '10%' }} src={profilePicResult.data.setUserProfilePic.imageUrl} fluid></Image><br /></>)
         }
     }, [profilePicResult.data]) // eslint-disable-line
     const [deleteProfilePic, deleteProfilePicResult] = useMutation(DELETE_PROFILEPIC, { // eslint-disable-line

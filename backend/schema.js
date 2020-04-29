@@ -232,7 +232,21 @@ const resolvers = {
             if (!currentUser) {
                 throw new AuthenticationError('Not authenticated')
             }
-            return currentUser.pinnedChats
+            return Chat.find({ title: { $in: currentUser.pinnedChats.map(chat => chat.title) } }).populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            }).populate({
+                path: 'latestComment',
+                model: 'Comment',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
         }
     },
     Mutation: {

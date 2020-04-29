@@ -34,6 +34,24 @@ export const CHATS = gql`
     }
 `
 
+export const CHATS_PINNED = gql`
+    query {
+        pinnedChats {
+            title
+            latestComment{
+                content
+                date
+                user{
+                    username
+                }
+            }
+            id
+            date
+            reports
+        }
+    }
+`
+
 export const REPORTED_CHATS = gql`
     query {
         reportedChats {
