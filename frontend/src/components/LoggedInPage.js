@@ -1,6 +1,5 @@
 import React from 'react'
 import ChatsPage from './ChatsPage'
-import PinnedChatsPage from './PinnedChatsPage'
 import ReportedChatsPage from './ReportedChatsPage'
 import ReportedCommentsPage from './ReportedCommentsPage'
 import ChatPage from './ChatPage'
@@ -27,9 +26,6 @@ const LoggedInPage = () => {
                 </Route>
                 <Route path='/chats'>
                     <ChatsPage></ChatsPage>
-                </Route>
-                <Route path='/pinnedchats'>
-                    <PinnedChatsPage></PinnedChatsPage>
                 </Route>
                 <Route path='/users/:username'>
                     <ProfilePage></ProfilePage>

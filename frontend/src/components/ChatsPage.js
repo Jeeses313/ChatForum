@@ -6,7 +6,7 @@ import ChatListing from './ChatListing'
 import ChatForm from './ChatForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Button } from 'react-bootstrap'
 
 const ChatsPage = () => {
     const dispatch = useDispatch()
@@ -17,6 +17,7 @@ const ChatsPage = () => {
     const [chatsToShow, setChatsToShow] = useState([])
     const [filter, setFilter] = useState('')
     const [pinnedChats, setPinnedChats] = useState()
+    const [onlyPinned, setOnlyPinned] = useState(false)
     const sortChats = useCallback((chatA, chatB) => {
         if (!pinnedChats) {
             return 0
@@ -79,11 +80,19 @@ const ChatsPage = () => {
     })
     useEffect(() => {
         if (filter === '') {
-            setChatsToShow(chats.slice(0).sort(sortChats))
+            if (onlyPinned) {
+                setChatsToShow(chats.filter(chatp => pinnedChats.includes(chatp.title)).sort(sortChats))
+            } else {
+                setChatsToShow(chats.slice(0).sort(sortChats))
+            }
         } else {
-            setChatsToShow(chats.filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            if (onlyPinned) {
+                setChatsToShow(chats.filter(chatp => pinnedChats.includes(chatp.title)).filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            } else {
+                setChatsToShow(chats.filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            }
         }
-    }, [filter, chats, sortChats])
+    }, [filter, chats, sortChats, onlyPinned, pinnedChats])
     const [pinChat, pinResult] = useMutation(PIN_CHAT, { // eslint-disable-line
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -142,7 +151,14 @@ const ChatsPage = () => {
         <div style={{ height: '100%' }}>
             <Row>
                 <Col md="8" style={colStyle}>
-                    <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Chats</h2>
+                    <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
+                        Chats&nbsp;
+                        {onlyPinned ?
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(false)}>Show all</Button>
+                            :
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(true)}>Show pinned</Button>
+                        }
+                    </h2>
                 </Col>
                 <Col md="4" style={colStyle}>
                     <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
