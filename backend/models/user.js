@@ -23,6 +23,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: false
   },
+  joinDate: {
+    type: Date,
+    required: true
+  },
   admin: {
     type: Boolean,
     required: true

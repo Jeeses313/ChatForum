@@ -78,6 +78,7 @@ const ProfilePage = () => {
             setImage(<><Image style={{ height: '100%', width: '100%' }} src={user.imageUrl} fluid></Image><br /></>)
         }
     }, [user])
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     return (
         <>
             {user ?
@@ -87,7 +88,10 @@ const ProfilePage = () => {
                             <div>{image}</div>
                         </Row>
                         <Row>
-                            <h2>{user.username}</h2>
+                            <h2 style={{ marginBottom: '0px' }}>{user.username}</h2>
+                        </Row>
+                        <Row>
+                            Joined: {new Date(user.joinDate).toLocaleDateString([], options)}
                         </Row>
                         <Row >
                             {user.username === currentUser.username ?

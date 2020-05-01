@@ -24,7 +24,9 @@ const Chat = ({ title }) => {
     const commentsEndRef = useRef(null)
     const [toScroll, setToScroll] = useState(true)
     const scrollToBottom = () => {
-        commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        if (commentsEndRef.current) {
+            commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
     }
     useEffect(() => {
         loadChat({ variables: { chatTitle: title } })

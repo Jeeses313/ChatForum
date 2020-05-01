@@ -4,6 +4,7 @@ import ReportedChatsPage from './ReportedChatsPage'
 import ReportedCommentsPage from './ReportedCommentsPage'
 import ChatPage from './ChatPage'
 import ProfilePage from './ProfilePage'
+import UsersPage from './UsersPage'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import ErrorPage from './ErrorPage'
 import { Container } from 'react-bootstrap'
@@ -29,6 +30,9 @@ const LoggedInPage = () => {
                 </Route>
                 <Route path='/users/:username'>
                     <ProfilePage></ProfilePage>
+                </Route>
+                <Route path='/users'>
+                    <UsersPage></UsersPage>
                 </Route>
                 <Route path='/'>
                     <Redirect to='/chats'></Redirect>

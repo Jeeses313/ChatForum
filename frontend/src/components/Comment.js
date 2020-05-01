@@ -137,7 +137,7 @@ const Comment = ({ comment }) => {
     return (
         <div style={styleBox}>
             <div>
-                {profileImage} <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link> {date}
+                {profileImage} <Link to={`/users/${comment.user.username}`}>{comment.user.username}</Link>{comment.user.admin ? <span>(admin)</span> : <></>} {date}
                 {currentUser.admin ?
                     <> Reports: {comment.reports.length}</>
                     :

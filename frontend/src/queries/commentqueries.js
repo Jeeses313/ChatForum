@@ -12,6 +12,7 @@ export const CREATE_COMMENT = gql`
             user{
                 username
                 imageUrl
+                admin
             }
         }
     }
@@ -28,6 +29,7 @@ export const REPORTED_COMMENTS = gql`
             user{
                 username
                 imageUrl
+                admin
             }
             reports
         }
@@ -41,6 +43,7 @@ export const COMMENT_ADDED = gql`
                 user { 
                     username
                     imageUrl
+                    admin
                 }
                 date
                 content

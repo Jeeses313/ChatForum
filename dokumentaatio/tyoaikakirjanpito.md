@@ -17,5 +17,6 @@
 | 26.4 |    3   |  react-bootsrapin Row, Col ja Containerin käyttöönotto ja layoutin parantaminen, modal imagejen käyttö ja niihin liittyvien ongelmien ratakaiseminen     |
 | 28.4 |    1,5   |  kommenttien kuvien aiheuttaman scrollausvirheen korjaaminen chateissa ja kommenttien poistamisen, reporttauksen ja editoinnin aiheuttaman scrollauksen poistaminen  |
 | 29.4 |    2,5   |  navigointipalkin tyylin muuttaminen ja vain pinnattujen chattien listaava sivu   |
-| yht |    49   |     |
+| 1.5 |    2   |  admin statuksen näkyminen käyttäjän nimen yhteydessä, käyttäjien listaaminen, käyttäjien rekisteröitymispäivän näkyminen, käyttöohjeiden kirjoittaminen   |
+| yht |    51   |     |
 

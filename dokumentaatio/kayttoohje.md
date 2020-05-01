@@ -21,7 +21,7 @@ sinut kirjataan automaattisesti sisään ja ohjataan chattien sivulle. Sivulla o
 ### Chattien sivu  
 Sivulla on listattuna chatteja, joiden otsikkoa klikkaamalla pääsee chatin sivulle. Chateista kerrotaan joko aika, jolloin chatti on aloitettu, tai aika, jolloin chatissa 
 on viimeksi lisätty kommentti ja kyseisen kommentin sisältö ja sen lisänneen käyttäjän nimi. Chatit ovat aikajärjestyksessä luontiajan ja viimeisimmän viestin mukaan, mutta chatin voi 
-halutessa "pinnata" klikkaamalla nappia *Pin*. *Pinnatut* chatit ovat ennen muita chatteja aikajärjestyksessä. "Pinnauksen" voi poistaa klikkaamalla nappia *Unpin*. Chatin voi myös ilmoittaa asiattomaksi klikkaamalla nappia *Report*, jolloin admin voi ilmoituksen huomattuaan 
+halutessa "pinnata" klikkaamalla nappia *Pin*. *Pinnatut* chatit ovat ennen muita chatteja aikajärjestyksessä. "Pinnauksen" voi poistaa klikkaamalla nappia *Unpin*. Klikkaamalla nappia *Show pinned*, listataan vain "pinnatut" chatit, ja sitten klikkaamalla *Show all*, näytetään taas kaikki chatit. Chatin voi myös ilmoittaa asiattomaksi klikkaamalla nappia *Report*, jolloin admin voi ilmoituksen huomattuaan 
 poistaa chatin. Ilmotuksen voi poistaa klikkaamalla nappia *Unreport*. Sivun oikeassa yläkulmassa on myös tekstikenttä, johon kirjoittamalla voi filtteröidä chatteja niiden otsikoiden mukaan, ja alareunassa olevaan tekstikenttään kirjoittamalla ja nappia *Start new chat* klikkaamalla voi aloittaa uuden chatin, 
 jolloin sinut ohjataan chatin sivulle.  
 
@@ -32,8 +32,13 @@ mahdollinen käyttäjän profiilikuva, lähetysaika ja sisältö. Muiden käytt�
 sisällön mukaan.    
 
 ### Profiilisivu
-Sivun vasemmassa yläkulmassa näkyy käyttäjän profiilikuva ja käyttäjänimi. Omalla profiilisivulla näkyy myös nappi *Set image*, jolla voi asettaa profiilikuvan. Kun nappia on painettu, esiin tulee tekstikenttä, johon voi kirjoittaa kuvan ositteen ja klikkaamalla nappia *Set image* kuva asetetaan profiilikuvaksi. Napilla *Back* voi keskeyttää kuvan asettamisen ja napilla *Delete image* voi poistaa profiilikuvan. Sivulla on myös käyttäjän oma chatti, joka toimii 
+Sivun vasemmassa yläkulmassa näkyy käyttäjän profiilikuva, käyttäjänimi ja käyttäjän rekisteröitymispäivä. Omalla profiilisivulla näkyy myös nappi *Set image*, jolla voi asettaa profiilikuvan. Kun nappia on painettu, esiin tulee tekstikenttä, johon voi kirjoittaa kuvan ositteen ja klikkaamalla nappia *Set image* kuva asetetaan profiilikuvaksi. Napilla *Back* voi keskeyttää kuvan asettamisen ja napilla *Delete image* voi poistaa profiilikuvan. Sivulla on myös käyttäjän oma chatti, joka toimii 
 samoin kuin yksittäisen chatin sivussa.  
+
+### Käyttäjien sivu  
+Sivulla on listattuna rekisteröityneet käyttäjät, joista näkyy heidän profiilikuva, käyttäjänimi ja rekisteröitymispäivä. Klikkaamalla käyttäjän nimeä, pääsee tämän profiilisivulle. 
+Napilla *Sort by: joined date*, käyttäjät järjestetään rekisteröitymispäivän mukaan vanhimmasta uusimpaan ja napilla *Sort by: username*, käyttäjät järjestetään käyttäjänimen mukaan. Sivun oikeassa yläkulmassa olevalla 
+tekstikentällä voi filtteröidä käyttäjiä heidän käyttäjänimen mukaan.  
 
 ## Admin oikeudet  
 Admin voi nähdä kuinka monta kertaa chatit ja kommentit on ilmoitettu asiattomaksi. Admin voi poistaa chatteja ja kommentteja. Chatteja voi poistaa chattien sivulta tai ilmoitettujen chattien sivulta, johon vain admin pääsee klikkaamalla navigointipalkin nappia *Reported chats* ja joka toimii samoin kuin chattien sivu, mutta siinä näytetään vain chatteja, jotka on ilmoitettu asiattomiksi. Kommentteja voi poistaa yksittäisen chatin sivulta tai ilmoitettujen kommenttien sivulta, johon pääsee 
@@ -44,7 +49,7 @@ vain admin pääsee klikkaamalla navigointipalkin nappia *Reported comments* ja 
 Klikkaamalla nappia *Dark/Light mode* saa vaihdettua sivun taustan värin mustaksi/valkoiseksi.  
 
 #### Kirjautuneille  
-Klikkaamalla nappia *Chats* pääsee chattien sivulle ja klikkaamalla linkkiä, joka on käyttäjänimesi, pääsee omalle profiili sivulle. 
+Klikkaamalla nappia *Chats* pääsee chattien sivulle ja klikkaamalla nappia *Users* pääsee käyttäjien sivulle. Linkkiä, joka on käyttäjänimesi, pääsee omalle profiilisivulle. 
 Napilla *Logout* pääsee kirjautumaan ulos, jolloin ohjataan takaisin kirjautumissivulle.  
 
 #### Adminille  

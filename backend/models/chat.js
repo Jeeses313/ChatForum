@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
         required: true,
         unique: true,
         minlength: 3,
-        maxlength: 15
+        maxlength: 30
     },
     comments: [
         {

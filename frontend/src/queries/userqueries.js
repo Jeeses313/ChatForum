@@ -11,6 +11,7 @@ export const LOGIN = gql`
                     title
                 }
                 admin
+                joinDate
             }
         }
     }
@@ -27,6 +28,7 @@ export const SIGNIN = gql`
                     title
                 }
                 admin
+                joinDate
             }
         }
     }
@@ -37,6 +39,18 @@ export const USER = gql`
         user(username: $username)  {
             username
             imageUrl
+            admin
+            joinDate
+        }
+    }
+`
+export const USERS = gql`
+    query {
+        users {
+            username
+            imageUrl
+            admin
+            joinDate
         }
     }
 `
@@ -57,4 +71,16 @@ mutation deleteUserProfilePic {
         imageUrl
     }
 }
+`
+
+
+export const USER_CREATED = gql`
+    subscription {
+        userCreated {
+            username
+            imageUrl
+            admin
+            joinDate
+        }
+    }
 `

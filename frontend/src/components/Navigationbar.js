@@ -40,6 +40,7 @@ const Navigationbar = () => {
                             <Nav className="mr-auto">
                                 <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
                                     <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/users') }}>Users</Button>
                                     <Button variant="outline-info" onClick={() => { history.push('/reported/chats') }}>Reported chats</Button>
                                     <Button variant="outline-info" onClick={() => { history.push('/reported/comments') }}>Reported comments</Button>
                                 </Nav.Link>
@@ -74,6 +75,7 @@ const Navigationbar = () => {
                             <Nav className="mr-auto">
                                 <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
                                     <Button variant="outline-info" onClick={() => { history.push('/chats') }}>Chats</Button>
+                                    <Button variant="outline-info" onClick={() => { history.push('/users') }}>Users</Button>
                                 </Nav.Link>
                             </Nav>
                         </Navbar.Collapse>

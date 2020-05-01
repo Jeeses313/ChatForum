@@ -19,6 +19,7 @@ const typeDefs = gql`
         imageUrl: String
         id: ID!
         admin: Boolean!
+        joinDate: Date!
     }
 
     type Chat {
@@ -54,6 +55,7 @@ const typeDefs = gql`
     type Query {
         me: User
         user(username: String!): User!
+        users: [User!]!
         chats: [Chat!]!
         reportedChats: [Chat!]!
         reportedComments: [Comment!]!
@@ -120,6 +122,7 @@ const typeDefs = gql`
     }  
 
     type Subscription {
+        userCreated: User!
         commentAdded: CommentSub!
         chatAdded: Chat!
         chatDeleted: Chat!
@@ -163,7 +166,14 @@ const resolvers = {
             if (!user) {
                 throw new UserInputError('User does not exist')
             }
-            return { id: user.id, username: user.username, imageUrl: user.imageUrl }
+            return { id: user.id, username: user.username, imageUrl: user.imageUrl, admin: user.admin, joinDate: user.joinDate }
+        },
+        users: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new AuthenticationError('Not authenticated')
+            }
+            const users = await User.find({})
+            return users.map(user => { return { username: user.username, imageUrl: user.imageUrl, admin: user.admin, joinDate: user.joinDate } })
         },
         chats: async (root, args, { currentUser }) => {
             if (!currentUser) {
@@ -256,7 +266,7 @@ const resolvers = {
             }
             const saltRounds = 10
             const password = await bcrypt.hash(args.password, saltRounds)
-            const user = new User({ username: args.username, password, pinnedChats: [], admin: false })
+            const user = new User({ username: args.username, password, pinnedChats: [], admin: false, joinDate: new Date })
             return user.save().then(async res => {
                 const userForToken = {
                     username: res.username,
@@ -264,7 +274,8 @@ const resolvers = {
                 }
                 const userChat = new Chat({ title: `userChat${res.username}`, comments: [], date: new Date, profileChat: true })
                 await userChat.save()
-                return { value: jwt.sign(userForToken, SECRET), user: { id: res.id, username: res.username, pinnedChats: [], admin: false } }
+                pubsub.publish('USER_CREATED', { userCreated: { username: res.username, imageUrl: res.imageUrl, admin: res.admin, joinDate: res.joinDate } })
+                return { value: jwt.sign(userForToken, SECRET), user: { id: res.id, username: res.username, pinnedChats: [], admin: false, joinDate: res.joinDate } }
             })
                 .catch(error => {
                     throw new UserInputError('Username and password must be 3-15 characters long and username must be unique')
@@ -274,7 +285,7 @@ const resolvers = {
             const user = await User.findOne({ username: args.username }).populate('pinnedChats', { title: 1 })
 
             if (!user || !(await bcrypt.compare(args.password, user.password))) {
-                throw new UserInputError("wrong credentials")
+                throw new UserInputError("Wrong credentials")
             }
 
             const userForToken = {
@@ -282,7 +293,7 @@ const resolvers = {
                 id: user._id,
             }
 
-            return { value: jwt.sign(userForToken, SECRET), user: { id: user.id, username: user.username, pinnedChats: user.pinnedChats, admin: user.admin } }
+            return { value: jwt.sign(userForToken, SECRET), user: { id: user.id, username: user.username, pinnedChats: user.pinnedChats, admin: user.admin, joinDate: user.joinDate } }
         },
         createChat: async (root, args, { currentUser }) => {
             if (!currentUser) {
@@ -296,7 +307,7 @@ const resolvers = {
                 pubsub.publish('CHAT_ADDED', { chatAdded: res })
                 return res
             }).catch(error => {
-                throw new UserInputError('Title must be 3-15 characters long and unique')
+                throw new UserInputError('Title must be 3-30 characters long and unique')
             })
         },
         deleteChat: async (root, args, { currentUser }) => {
@@ -636,6 +647,9 @@ const resolvers = {
     },
 
     Subscription: {
+        userCreated: {
+            subscribe: () => pubsub.asyncIterator(['USER_CREATED'])
+        },
         commentAdded: {
             subscribe: () => pubsub.asyncIterator(['COMMENT_ADDED'])
         },

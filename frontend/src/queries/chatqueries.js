@@ -25,6 +25,7 @@ export const CHATS = gql`
                 date
                 user{
                     username
+                    admin
                 }
             }
             id
@@ -43,6 +44,7 @@ export const CHATS_PINNED = gql`
                 date
                 user{
                     username
+                    admin
                 }
             }
             id
@@ -61,6 +63,7 @@ export const REPORTED_CHATS = gql`
                 date
                 user{
                     username
+                    admin
                 }
             }
             id
@@ -77,6 +80,7 @@ export const CHAT = gql`
                 user { 
                     username
                     imageUrl
+                    admin
                 }
                 date
                 content
@@ -108,6 +112,7 @@ export const CHAT_ADDED = gql`
                 date
                 user {
                     username
+                    admin
                 }
             }
             date
@@ -127,12 +132,14 @@ export const CHAT_REPORTED = gql`
                 date
                 user {
                     username
+                    admin
                 }
             }
             comments{
                 user { 
                     username
                     imageUrl
+                    admin
                 }
                 date
                 content

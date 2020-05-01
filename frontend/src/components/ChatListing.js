@@ -18,6 +18,9 @@ const Chat = ({ chat, isPinned, submitPin, submitUnpin }) => {
         } else {
             latestComment = `${chat.latestComment.content} -${chat.latestComment.user.username}`
         }
+        if(chat.latestComment.user.admin) {
+            latestComment += '(admin)'
+        }
         date = new Date(chat.latestComment.date).toLocaleTimeString([], options)
     }
     const [deleteChat, result] = useMutation(DELETE_CHAT, { // eslint-disable-line
@@ -91,7 +94,6 @@ const Chat = ({ chat, isPinned, submitPin, submitUnpin }) => {
                     <></>
                 }
             </div>
-
             <div>
                 {latestComment}
             </div>
