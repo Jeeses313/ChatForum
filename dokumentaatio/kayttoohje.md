@@ -21,13 +21,14 @@ sinut kirjataan automaattisesti sisään ja ohjataan chattien sivulle. Sivulla o
 ### Chattien sivu  
 Sivulla on listattuna chatteja, joiden otsikkoa klikkaamalla pääsee chatin sivulle. Chateista kerrotaan joko aika, jolloin chatti on aloitettu, tai aika, jolloin chatissa 
 on viimeksi lisätty kommentti ja kyseisen kommentin sisältö ja sen lisänneen käyttäjän nimi. Chatit ovat aikajärjestyksessä luontiajan ja viimeisimmän viestin mukaan, mutta chatin voi 
-halutessa "pinnata" klikkaamalla nappia *Pin*. *Pinnatut* chatit ovat ennen muita chatteja aikajärjestyksessä. "Pinnauksen" voi poistaa klikkaamalla nappia *Unpin*. Klikkaamalla nappia *Show pinned*, listataan vain "pinnatut" chatit, ja sitten klikkaamalla *Show all*, näytetään taas kaikki chatit. Chatin voi myös ilmoittaa asiattomaksi klikkaamalla nappia *Report*, jolloin admin voi ilmoituksen huomattuaan 
+halutessa "pinnata" klikkaamalla nappia *Pin*. *Pinnatut* chatit ovat ennen muita chatteja aikajärjestyksessä. "Pinnauksen" voi poistaa klikkaamalla nappia *Unpin*. Klikkaamalla nappia *Show: all*, listataan vain "pinnatut" chatit, ja sitten klikkaamalla *Show: pinned*, näytetään taas kaikki chatit. 
+Klikkaamalla nappia *Sort by: activity*, chatit järjestetään niiden otsikoiden ja "pinnauksen" mukaan, ja sitten napilla *Sort by: title*, chatit järjestetään taas aika- ja pinnausjärjestyksessä. Chatin voi myös ilmoittaa asiattomaksi klikkaamalla nappia *Report*, jolloin admin voi ilmoituksen huomattuaan 
 poistaa chatin. Ilmotuksen voi poistaa klikkaamalla nappia *Unreport*. Sivun oikeassa yläkulmassa on myös tekstikenttä, johon kirjoittamalla voi filtteröidä chatteja niiden otsikoiden mukaan, ja alareunassa olevaan tekstikenttään kirjoittamalla ja nappia *Start new chat* klikkaamalla voi aloittaa uuden chatin, 
 jolloin sinut ohjataan chatin sivulle.  
 
 ### Yksittäisen chatin sivu  
-Samoin kuin chattien sivulla, chatin otsikon vierestä chatin voi "pinnata" klikkaamalla nappia *Pin* tai poistaa "pinnauksen" napilla *Unpin* ja ilmoittaa asiattomaksi napilla *Report* ja poistaa ilmoituksen napilla *Unreport*. Chatissa näkyy kommentteja aikajärjestyksessä. Jokaisessa kommentissa on lähettäjän nimi, jota klikkaamalla pääsee lähettäjän profiilisivulle, 
-mahdollinen käyttäjän profiilikuva, lähetysaika ja sisältö. Muiden käyttäjien kommenteissa on nappi *Report*, joka toimii samoin kuin chateissa. Napilla *Unreport* ilmoituksen voi poistaa. Omissa kommenteissa on nappi *Delete comment*, jolla kommentin voi poistaa, ja *Start editing*, jota klikkaamalla voi muokata kommenttiaan. Muokatessa kommenttia voi muuttaa sen sisältöä ja vaihtaa siihen liitetyn kuvan tai videon. Klikkaamalla 
+Samoin kuin chattien sivulla, chatin otsikon vierestä chatin voi "pinnata" klikkaamalla nappia *Pin* tai poistaa "pinnauksen" napilla *Unpin* ja ilmoittaa asiattomaksi napilla *Report* ja poistaa ilmoituksen napilla *Unreport*. Chatissa näkyy kommentteja aikajärjestyksessä. Jokaisessa kommentissa on lähettäjän nimi ja mahdollinen profiilikuva, joita klikkaamalla pääsee lähettäjän profiilisivulle, lähetysaika ja sisältö. 
+Muiden käyttäjien kommenteissa on nappi *Report*, joka toimii samoin kuin chateissa. Napilla *Unreport* ilmoituksen voi poistaa. Omissa kommenteissa on nappi *Delete comment*, jolla kommentin voi poistaa, ja *Start editing*, jota klikkaamalla voi muokata kommenttiaan. Muokatessa kommenttia voi muuttaa sen sisältöä ja vaihtaa siihen liitetyn kuvan tai videon. Klikkaamalla 
 *Stop editing* voi muokkaamisen lopettaa ja hylätä muutokset ja napilla *Submit edit* voi hyväksyä muutokset. Sivun alareunassa on tekstikenttä, johon voi kirjoittaa uuden kommentin, ja kentän alla on toinen kenttä, johon voi halutessaan kirjoittaa kuvan tai videon osoitteen, jonka haluaa liittää kommenttiin. Klikkaamalla nappia *Send* kommentti lähetetään. Sivun oikeassa yläkulmassa on tekstikenttä, jolla voi filtteröidä kommentteja niiden 
 sisällön mukaan.    
 
@@ -36,9 +37,9 @@ Sivun vasemmassa yläkulmassa näkyy käyttäjän profiilikuva, käyttäjänimi 
 samoin kuin yksittäisen chatin sivussa.  
 
 ### Käyttäjien sivu  
-Sivulla on listattuna rekisteröityneet käyttäjät, joista näkyy heidän profiilikuva, käyttäjänimi ja rekisteröitymispäivä. Klikkaamalla käyttäjän nimeä, pääsee tämän profiilisivulle. 
-Napilla *Sort by: joined date*, käyttäjät järjestetään rekisteröitymispäivän mukaan vanhimmasta uusimpaan ja napilla *Sort by: username*, käyttäjät järjestetään käyttäjänimen mukaan. Sivun oikeassa yläkulmassa olevalla 
-tekstikentällä voi filtteröidä käyttäjiä heidän käyttäjänimen mukaan.  
+Sivulla on listattuna rekisteröityneet käyttäjät, joista näkyy heidän käyttäjänimi, mahdollinen profiilikuva ja rekisteröitymispäivä. Klikkaamalla käyttäjän nimeä tai profiilikuvaa, pääsee tämän profiilisivulle. 
+Napilla *Sort by: username*, käyttäjät järjestetään rekisteröitymispäivän mukaan vanhimmasta uusimpaan ja napilla *Sort by: joined date*, käyttäjät järjestetään käyttäjänimen mukaan. Sivun oikeassa yläkulmassa olevalla 
+tekstikentällä voi filtteröidä käyttäjiä heidän käyttäjänimien mukaan.  
 
 ## Admin oikeudet  
 Admin voi nähdä kuinka monta kertaa chatit ja kommentit on ilmoitettu asiattomaksi. Admin voi poistaa chatteja ja kommentteja. Chatteja voi poistaa chattien sivulta tai ilmoitettujen chattien sivulta, johon vain admin pääsee klikkaamalla navigointipalkin nappia *Reported chats* ja joka toimii samoin kuin chattien sivu, mutta siinä näytetään vain chatteja, jotka on ilmoitettu asiattomiksi. Kommentteja voi poistaa yksittäisen chatin sivulta tai ilmoitettujen kommenttien sivulta, johon pääsee 
@@ -46,7 +47,7 @@ vain admin pääsee klikkaamalla navigointipalkin nappia *Reported comments* ja 
 
 ### Navigointipalkki  
 #### Kaikille  
-Klikkaamalla nappia *Dark/Light mode* saa vaihdettua sivun taustan värin mustaksi/valkoiseksi.  
+Klikkaamalla nappia *Dark/Light mode* saa vaihdettua sivun värityksen tummaksi/vaaleaksi.  
 
 #### Kirjautuneille  
 Klikkaamalla nappia *Chats* pääsee chattien sivulle ja klikkaamalla nappia *Users* pääsee käyttäjien sivulle. Linkkiä, joka on käyttäjänimesi, pääsee omalle profiilisivulle. 

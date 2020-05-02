@@ -15,6 +15,7 @@ const ProfilePage = () => {
     const dispatch = useDispatch()
     const history = useHistory()
     const currentUser = useSelector(state => state.user)
+    const mode = useSelector(state => state.mode)
     const match = useRouteMatch('/users/:username')
     const [user, setUser] = useState(null)
     const [imageUrl, setImageUrl] = useState('')
@@ -79,6 +80,12 @@ const ProfilePage = () => {
         }
     }, [user])
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    const urlStyle = { borderColor: 'grey', width: '100%' }
+    if (mode === 'light') {
+        urlStyle.backgroundColor = 'white'
+    } else {
+        urlStyle.backgroundColor = 'darkgray'
+    }
     return (
         <>
             {user ?
@@ -93,26 +100,25 @@ const ProfilePage = () => {
                         <Row>
                             Joined: {new Date(user.joinDate).toLocaleDateString([], options)}
                         </Row>
-                        <Row >
+                        <Row>
                             {user.username === currentUser.username ?
                                 <>
                                     {editImageUrl ?
-                                        <>
-                                            <Row>
-                                                <input type='text' placeholder='Url of the image...' value={imageUrl} onChange={({ target }) => setImageUrl(target.value)}></input>
-                                            </Row>
-                                            <Row>
-                                                <Button type='button' size='sm' onClick={stopEditing}>Back</Button>
-                                                {user.imageUrl ?
-                                                    <Button type='button' size='sm' onClick={submitDeleteImage}>Delete image</Button>
-                                                    :
-                                                    <></>
-                                                }
-                                                <Button type='button' size='sm' onClick={submitSetImage}>Submit image</Button>
-                                            </Row>
-                                        </>
+                                        <Col style={{ paddingLeft: '0' }}>
+                                            <input type='text' style={urlStyle} placeholder='Url of the image...' value={imageUrl} onChange={({ target }) => setImageUrl(target.value)}></input>
+                                            <Button type='button' size='sm' onClick={stopEditing}>Back</Button>
+                                            {user.imageUrl ?
+                                                <Button type='button' size='sm' onClick={submitDeleteImage}>Delete image</Button>
+                                                :
+                                                <></>
+                                            }
+                                            <Button type='button' size='sm' onClick={submitSetImage}>Submit image</Button>
+                                        </Col>
                                         :
-                                        <Button type='button' size='sm' onClick={() => setEditImageUrl(true)}>Set image</Button>
+                                        <Col style={{ paddingLeft: '0' }} >
+                                            <Button type='button' size='sm' onClick={() => setEditImageUrl(true)}>Set image</Button>
+                                        </Col>
+
                                     }
                                 </>
                                 :

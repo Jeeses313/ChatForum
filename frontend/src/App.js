@@ -18,9 +18,11 @@ const App = () => {
     }
     if (mode === 'light') {
         document.body.style.backgroundColor = 'white'
+        document.body.style.color = 'black'
 
     } else {
-        document.body.style.backgroundColor = 'darkgray'
+        document.body.style.backgroundColor = '#1a1a1a'
+        document.body.style.color = 'darkgray'
     }
     return (
         <div style={style}>

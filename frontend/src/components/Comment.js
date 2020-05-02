@@ -6,9 +6,11 @@ import { Button, Image } from 'react-bootstrap'
 import { DELETE_COMMENT, EDIT_COMMENT, REPORT_COMMENT, UNREPORT_COMMENT, ZEROREPORT_COMMENT } from '../queries/commentqueries'
 import { Link } from 'react-router-dom'
 import CommentMedia from './CommentMedia'
+import { useHistory } from 'react-router-dom'
 
 const Comment = ({ comment }) => {
     const dispatch = useDispatch()
+    const history = useHistory()
     const currentUser = useSelector(state => state.user)
     const mode = useSelector(state => state.mode)
     const [content, setContent] = useState(comment.content)
@@ -41,7 +43,7 @@ const Comment = ({ comment }) => {
     }, [deleteResult]) // eslint-disable-line
     let profileImage = <></>
     if (comment.user.imageUrl) {
-        profileImage = <><Image style={{ height: '10%', width: '10%' }} src={comment.user.imageUrl} fluid></Image></>
+        profileImage = <><Image style={{ height: '10%', width: '10%' }} src={comment.user.imageUrl} onClick={() => history.push(`/users/${comment.user.username}`)} fluid></Image></>
     }
     const submitEdit = () => {
         if (window.confirm('Edit comment?')) {
@@ -128,8 +130,10 @@ const Comment = ({ comment }) => {
     if (mode === 'light') {
         contentBoxStyle.backgroundColor = 'white'
         urlStyle.backgroundColor = 'white'
+        contentBoxStyle.color = 'black'
     } else {
-        contentBoxStyle.backgroundColor = 'darkgray'
+        contentBoxStyle.backgroundColor = '#1a1a1a'
+        contentBoxStyle.color = 'darkgray'
         urlStyle.backgroundColor = 'darkgray'
     }
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }

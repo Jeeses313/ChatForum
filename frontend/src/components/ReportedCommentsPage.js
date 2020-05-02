@@ -23,16 +23,21 @@ const ReportedCommentsPage = () => {
         return commentA.date - commentB.date
     }
     const scrollToBottom = () => {
-        commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        if (commentsEndRef.current) {
+            commentsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
     }
     useEffect(() => {
         if (!currentUser.admin) {
             history.push('/error/Not authorized')
         }
+        console.log('oi')
         loadComments()
     }, []) //eslint-disable-line
     useEffect(() => {
+        console.log(commentsResult)
         if (commentsResult.data) {
+            console.log(commentsResult.data)
             setToScroll(true)
             setComments(commentsResult.data.reportedComments.sort(sortComments))
             setTimeout(() => {
@@ -88,7 +93,7 @@ const ReportedCommentsPage = () => {
         padding: '10px',
         marginBottom: '0',
         overflowY: 'scroll',
-        height: '70vh',
+        height: '77.5vh',
         width: '100%'
     }
     const filterStyle = { width: '100%', paddingBottom: '0', borderColor: 'grey' }
@@ -117,9 +122,11 @@ const ReportedCommentsPage = () => {
                         {comments.length === 0 ?
                             <div>No reported comments</div>
                             :
-                            commentsToShow.map(comment =>
-                                <Comment key={comment.id} comment={comment}></Comment>
-                            )
+                            <>
+                                {commentsToShow.map(comment =>
+                                    <Comment key={comment.id} comment={comment}></Comment>
+                                )}
+                            </>
                         }
                         <div ref={commentsEndRef} />
                     </div>

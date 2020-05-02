@@ -30,9 +30,9 @@ const Navigationbar = () => {
                         <Nav className="mr-auto">
                             <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
                                 {mode === 'light' ?
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Light  mode</Button>
                                     :
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Darkmode</Button>
                                 }
                             </Nav.Link>
                         </Nav>
@@ -65,9 +65,9 @@ const Navigationbar = () => {
                         <Nav className="mr-auto">
                             <Nav.Link href="#" as="span" style={{ paddingLeft: '0', paddingRight: '0' }}>
                                 {mode === 'light' ?
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Light mode</Button>
                                     :
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Dark mode</Button>
                                 }
                             </Nav.Link>
                         </Nav>
@@ -100,9 +100,9 @@ const Navigationbar = () => {
                         <Nav className="mr-auto">
                             <Nav.Link href="#" as="span">
                                 {mode === 'light' ?
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Dark mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('dark'))}>Light mode</Button>
                                     :
-                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Light mode</Button>
+                                    <Button variant="outline-info" onClick={() => dispatch(setMode('light'))}>Dark mode</Button>
                                 }
                             </Nav.Link>
                         </Nav>

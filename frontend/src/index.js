@@ -37,7 +37,7 @@ const defaultOptions = {
 const httpLink = new HttpLink({ uri: '/graphql' })
 
 let wsLink
-if (window.location.host.includes('localhost')) {
+if (window.location.host.includes('localhost') || window.location.host.includes('192.168.1.')) {
     wsLink = new WebSocketLink({
         uri: `ws://${window.location.host}/graphql`,
         options: { reconnect: true }

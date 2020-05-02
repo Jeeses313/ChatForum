@@ -18,6 +18,7 @@ const ChatsPage = () => {
     const [filter, setFilter] = useState('')
     const [pinnedChats, setPinnedChats] = useState()
     const [onlyPinned, setOnlyPinned] = useState(false)
+    const [sorByTitle, setSorByTitle] = useState(false)
     const sortChats = useCallback((chatA, chatB) => {
         if (!pinnedChats) {
             return 0
@@ -28,16 +29,21 @@ const ChatsPage = () => {
         if (!pinnedChats.includes(chatA.title) && pinnedChats.includes(chatB.title)) {
             return 1
         }
-        let dateA = chatA.date
-        if (chatA.latestComment) {
-            dateA = chatA.latestComment.date
+        if (sorByTitle) {
+            return chatA.title.localeCompare(chatB.title)
+        } else {
+            let dateA = chatA.date
+            if (chatA.latestComment) {
+                dateA = chatA.latestComment.date
+            }
+            let dateB = chatB.date
+            if (chatB.latestComment) {
+                dateB = chatB.latestComment.date
+            }
+            return dateB - dateA
         }
-        let dateB = chatB.date
-        if (chatB.latestComment) {
-            dateB = chatB.latestComment.date
-        }
-        return dateB - dateA
-    }, [pinnedChats])
+
+    }, [pinnedChats, sorByTitle])
     useEffect(() => {
         loadChats()
         loadPinnedChats()
@@ -92,7 +98,7 @@ const ChatsPage = () => {
                 setChatsToShow(chats.filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
             }
         }
-    }, [filter, chats, sortChats, onlyPinned, pinnedChats])
+    }, [filter, chats, sortChats, onlyPinned, pinnedChats, sorByTitle])
     const [pinChat, pinResult] = useMutation(PIN_CHAT, { // eslint-disable-line
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -153,10 +159,15 @@ const ChatsPage = () => {
                 <Col md="8" style={colStyle}>
                     <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
                         Chats&nbsp;
-                        {onlyPinned ?
-                            <Button type='button' size='sm' onClick={() => setOnlyPinned(false)}>Show all</Button>
+                        {sorByTitle ?
+                            <Button type='button' size='sm' onClick={() => setSorByTitle(false)}>Sort by: title</Button>
                             :
-                            <Button type='button' size='sm' onClick={() => setOnlyPinned(true)}>Show pinned</Button>
+                            <Button type='button' size='sm' onClick={() => setSorByTitle(true)}>Sort by: activity</Button>
+                        }
+                        {onlyPinned ?
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(false)}>Show: pinned</Button>
+                            :
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(true)}>Show: all</Button>
                         }
                     </h2>
                 </Col>
@@ -169,9 +180,17 @@ const ChatsPage = () => {
                     <div style={styleBox}>
                         {pinnedChats ?
                             <>
-                                {chatsToShow.map(chat =>
-                                    <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
-                                )}
+                                {chats.length !== 0 ?
+                                    <>
+                                        {
+                                            chatsToShow.map(chat =>
+                                                <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
+                                            )
+                                        }
+                                    </>
+                                    :
+                                    <div>No chats yet</div>
+                                }
                             </>
                             :
                             <div>Loading</div>

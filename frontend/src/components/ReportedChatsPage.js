@@ -6,7 +6,7 @@ import ChatListing from './ChatListing'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { useHistory } from 'react-router-dom'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Button } from 'react-bootstrap'
 
 const ReportedChatsPage = () => {
     const dispatch = useDispatch()
@@ -19,6 +19,8 @@ const ReportedChatsPage = () => {
     const [chatsToShow, setChatsToShow] = useState([])
     const [filter, setFilter] = useState('')
     const [pinnedChats, setPinnedChats] = useState()
+    const [onlyPinned, setOnlyPinned] = useState(false)
+    const [sorByTitle, setSorByTitle] = useState(false)
     const sortChats = useCallback((chatA, chatB) => {
         if (!pinnedChats) {
             return 0
@@ -32,16 +34,20 @@ const ReportedChatsPage = () => {
         if (chatA.reports.length !== chatB.reports.length) {
             return chatB.reports.length - chatA.reports.length
         }
-        let dateA = chatA.date
-        if (chatA.latestComment) {
-            dateA = chatA.latestComment.date
+        if (sorByTitle) {
+            return chatA.title.localeCompare(chatB.title)
+        } else {
+            let dateA = chatA.date
+            if (chatA.latestComment) {
+                dateA = chatA.latestComment.date
+            }
+            let dateB = chatB.date
+            if (chatB.latestComment) {
+                dateB = chatB.latestComment.date
+            }
+            return dateB - dateA
         }
-        let dateB = chatB.date
-        if (chatB.latestComment) {
-            dateB = chatB.latestComment.date
-        }
-        return dateB - dateA
-    }, [pinnedChats])
+    }, [pinnedChats, sorByTitle])
     useEffect(() => {
         if (!currentUser.admin) {
             history.push('/error/Not authorized')
@@ -92,11 +98,19 @@ const ReportedChatsPage = () => {
     })
     useEffect(() => {
         if (filter === '') {
-            setChatsToShow(chats.slice(0).sort(sortChats))
+            if (onlyPinned) {
+                setChatsToShow(chats.filter(chatp => pinnedChats.includes(chatp.title)).sort(sortChats))
+            } else {
+                setChatsToShow(chats.slice(0).sort(sortChats))
+            }
         } else {
-            setChatsToShow(chats.filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            if (onlyPinned) {
+                setChatsToShow(chats.filter(chatp => pinnedChats.includes(chatp.title)).filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            } else {
+                setChatsToShow(chats.filter(chat => chat.title.toLowerCase().startsWith(filter.toLowerCase())).sort(sortChats))
+            }
         }
-    }, [filter, chats, sortChats])
+    }, [filter, chats, sortChats, onlyPinned, pinnedChats, sorByTitle])
     const [pinChat, pinResult] = useMutation(PIN_CHAT, { // eslint-disable-line
         onError: (error) => {
             dispatch(setNotification({ message: error.graphQLErrors[0].message, error: true }, 10))
@@ -155,7 +169,19 @@ const ReportedChatsPage = () => {
         <div style={{ height: '100%' }}>
             <Row>
                 <Col md="8" style={colStyle}>
-                    <h2 style={{ display: 'inline-block', marginBottom: '0' }}>Reported chats</h2>
+                    <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
+                        Reported chats&nbsp;
+                        {sorByTitle ?
+                            <Button type='button' size='sm' onClick={() => setSorByTitle(false)}>Sort by: title</Button>
+                            :
+                            <Button type='button' size='sm' onClick={() => setSorByTitle(true)}>Sort by: activity</Button>
+                        }
+                        {onlyPinned ?
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(false)}>Show: pinned</Button>
+                            :
+                            <Button type='button' size='sm' onClick={() => setOnlyPinned(true)}>Show: all</Button>
+                        }
+                    </h2>
                 </Col>
                 <Col md="4" style={colStyle}>
                     <input style={filterStyle} type='text' value={filter} onChange={({ target }) => setFilter(target.value)} placeholder='Filter chats by title...'></input>
@@ -166,9 +192,15 @@ const ReportedChatsPage = () => {
                     <div style={styleBox}>
                         {pinnedChats ?
                             <>
-                                {chatsToShow.map(chat =>
-                                    <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
-                                )}
+                                {chats.length !== 0 ?
+                                    <>
+                                        {chatsToShow.map(chat =>
+                                            <ChatListing key={chat.id} chat={chat} submitPin={submitPin} submitUnpin={submitUnpin} isPinned={pinnedChats.includes(chat.title)}></ChatListing>
+                                        )}
+                                    </>
+                                    :
+                                    <div>No reported chats</div>
+                                }
                             </>
                             :
                             <div>Loading</div>

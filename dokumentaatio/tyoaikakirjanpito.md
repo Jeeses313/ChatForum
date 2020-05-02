@@ -18,5 +18,6 @@
 | 28.4 |    1,5   |  kommenttien kuvien aiheuttaman scrollausvirheen korjaaminen chateissa ja kommenttien poistamisen, reporttauksen ja editoinnin aiheuttaman scrollauksen poistaminen  |
 | 29.4 |    2,5   |  navigointipalkin tyylin muuttaminen ja vain pinnattujen chattien listaava sivu   |
 | 1.5 |    2   |  admin statuksen näkyminen käyttäjän nimen yhteydessä, käyttäjien listaaminen, käyttäjien rekisteröitymispäivän näkyminen, käyttöohjeiden kirjoittaminen   |
-| yht |    51   |     |
+| 2.5 |    2   |  bugien korjausta, ulkonäön, värien ja asettelun, parantelu, chattien järjestäminen ajan ja otsikoiden mukaan, käyttöohjeiden loppuun kirjoittaminen   |
+| yht |    53   |     |
 

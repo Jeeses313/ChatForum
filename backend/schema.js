@@ -219,7 +219,7 @@ const resolvers = {
             if (!currentUser || !currentUser.admin) {
                 throw new AuthenticationError('Not authenticated')
             }
-            return await Comment.find({ reports: { $exists: true, $ne: [] } }).populate('user', { username: 1 })
+            return await Comment.find({ reports: { $exists: true, $ne: [] } }).populate('user', { username: 1, admin: 1, imageUrl: 1 })
         },
         chat: async (root, args, { currentUser }) => {
             if (!currentUser) {

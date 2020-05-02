@@ -66,9 +66,9 @@ const UsersPage = () => {
                     <h2 style={{ display: 'inline-block', marginBottom: '0' }}>
                         Users&nbsp;
                         {sortByUsername ?
-                            <Button type='button' size='sm' onClick={() => setSortByUsername(false)}>Sort by: joined date</Button>
+                            <Button type='button' size='sm' onClick={() => setSortByUsername(false)}>Sort by: username</Button>
                             :
-                            <Button type='button' size='sm' onClick={() => setSortByUsername(true)}>Sort by: username</Button>
+                            <Button type='button' size='sm' onClick={() => setSortByUsername(true)}>Sort by: joined date</Button>
                         }
                     </h2>
                 </Col>
