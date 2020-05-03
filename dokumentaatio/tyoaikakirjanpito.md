@@ -13,10 +13,10 @@
 | 12.4 |    3   |  cannot GET virheen korjaus, ulkonäön parantaminen, youtube videoiden käyttäminen kommenteissa, dark/light mode, kuvan/videon osoitteen muokkaus kommenttia editoidessa   |
 | 17.4 |    4   | chattien reporttaus ja unreporttaus chattien ja yksittäisen chatin sivulta, chattien pinnaus yksittäisen chatin sivulta, adminille mahdollisuus nähdä chattien reporttien määrä, listata kaikki reportatut chatit ja poistaa chatin reportit   |
 | 18.4 |    3   | reporttien nollauksen ilmoituksen korjaus, chattien listaamiseen liittyvän virheilmoituksen korjaus, kommenttien reporttaus ja unreporttaus, adminille mahdollisuus nähdä kommenttien reporttien määrä, listata kakki reportatut kommentit ja poistaa kommentin reportit    |
-| 19.4 |    0,5   |  käyttöohjeiden kirjoittaminen ja pieni ulkonäön parannuksia   |
-| 26.4 |    3   |  react-bootsrapin Row, Col ja Containerin käyttöönotto ja layoutin parantaminen, modal imagejen käyttö ja niihin liittyvien ongelmien ratakaiseminen     |
+| 19.4 |    0,5   |  käyttöohjeiden kirjoittaminen ja pieniä ulkonäön parannuksia   |
+| 26.4 |    3   |  react-bootsrapin Row, Col ja Containerin käyttöönotto ja layoutin parantaminen, modal imagejen käyttö ja niihin liittyvien ongelmien ratkaiseminen     |
 | 28.4 |    1,5   |  kommenttien kuvien aiheuttaman scrollausvirheen korjaaminen chateissa ja kommenttien poistamisen, reporttauksen ja editoinnin aiheuttaman scrollauksen poistaminen  |
-| 29.4 |    2,5   |  navigointipalkin tyylin muuttaminen ja vain pinnattujen chattien listaava sivu   |
+| 29.4 |    2,5   |  navigointipalkin tyylin muuttaminen ja mahdollisuus listata vain "pinnatut" chatit   |
 | 1.5 |    2   |  admin statuksen näkyminen käyttäjän nimen yhteydessä, käyttäjien listaaminen, käyttäjien rekisteröitymispäivän näkyminen, käyttöohjeiden kirjoittaminen   |
 | 2.5 |    2   |  bugien korjausta, ulkonäön, värien ja asettelun, parantelu, chattien järjestäminen ajan ja otsikoiden mukaan, käyttöohjeiden loppuun kirjoittaminen   |
 | yht |    53   |     |
